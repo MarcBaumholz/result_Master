@@ -1,0 +1,152 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /api/hris/v4/absences",
+    "reasoning": "Target API endpoint for creating absences in Flip HRIS system",
+    "required_structure": "Direct field mapping - this is the target API structure"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_external_id)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "absence_type_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.absence_type_external_id)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.status)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_date)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_date)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_half_day)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_half_day)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.amount)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.unit)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "employee_note",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_note)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 10,
+    "unmappable_fields": 0,
+    "mapping_types": {
+      "Direct": 10,
+      "Conversion": 0,
+      "Unmappable": 0
+    },
+    "complexity_analysis": {
+      "simple_mappings": 10,
+      "conversion_mappings": 0,
+      "unmappable_fields": 0
+    },
+    "confidence_scores": {
+      "high_confidence": 10,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 0
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [],
+    "nested_structure_requirements": []
+  },
+  "recommendations": {
+    "data_conversions": [
+      "No conversions required - perfect 1:1 field mapping"
+    ],
+    "missing_fields_handling": [
+      "All fields are mappable - no missing fields"
+    ],
+    "validation_requirements": [
+      "All fields are required in API request",
+      "Date fields must be in proper format",
+      "Status must be valid enum value"
+    ],
+    "business_logic_considerations": [
+      "Perfect 1:1 field mapping as this is the target API",
+      "All fields must be present for successful request",
+      "No complex transformations required"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/api/hris/v4/absences",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["employee_external_id", "absence_type_external_id", "start_date", "end_date"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 10,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

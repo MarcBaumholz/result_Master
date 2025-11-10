@@ -1,0 +1,103 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employee_id",
+      "ground_truth_path": "/company/time-offs (requestBody.employee_id)",
+      "confidence": 0.95,
+      "notes": "Conversion to integer",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "target_field": "time_off_type_id",
+      "ground_truth_path": "/company/time-offs (requestBody.time_off_type_id)",
+      "confidence": 0.95,
+      "notes": "Conversion to integer",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "start_date",
+      "ground_truth_path": "/company/time-offs (requestBody.start_date)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "end_date",
+      "ground_truth_path": "/company/time-offs (requestBody.end_date)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "half_day_start",
+      "ground_truth_path": "/company/time-offs (requestBody.half_day_start)",
+      "confidence": 0.95,
+      "notes": "Boolean",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "target_field": "half_day_end",
+      "ground_truth_path": "/company/time-offs (requestBody.half_day_end)",
+      "confidence": 0.95,
+      "notes": "Boolean",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "target_field": "derived",
+      "ground_truth_path": "/company/time-offs (derived from start_date/end_date and half-days)",
+      "confidence": 0.85,
+      "notes": "Logical: compute days between dates; adjust for half days",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "target_field": "derived",
+      "ground_truth_path": "/company/time-offs (derived)",
+      "confidence": 0.85,
+      "notes": "Logical: Personio time-off uses day-based requests; set DAYS",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "comment",
+      "ground_truth_path": "/company/time-offs (requestBody.comment)",
+      "confidence": 0.9,
+      "notes": "Direct mapping",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [
+    "status"
+  ],
+  "unmappable_analysis": {
+    "status": {
+      "reason": "Status managed by workflow; not settable on create",
+      "api_limitation": "Field available in response only"
+    }
+  },
+  "mapping_summary": {
+    "direct_mappings": 5,
+    "conversion_mappings": 2,
+    "logical_mappings": 2,
+    "unmappable_fields": 1,
+    "mapping_coverage": "90%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/company/time-offs (POST)",
+      "/company/time-offs (GET)"
+    ],
+    "half_day_logic": "Boolean flags half_day_start/half_day_end",
+    "unit_logic": "Day-based time off"
+  }
+}

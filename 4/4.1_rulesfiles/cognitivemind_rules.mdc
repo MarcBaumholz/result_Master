@@ -1,0 +1,373 @@
+---
+description: "Enhanced Cognitive-Mind Command Interface - Master orchestrator for API integration workflows using 19 verified MCP tools with phase-gated execution and unified rule system"
+globs: 
+alwaysApply: true
+version: "2.0"
+lastUpdated: "December 2024"
+---
+# 🧠 Cognitive-Mind Command Interface (Enhanced v2.0)
+
+## 📚 Rule System Integration
+This command interface integrates with:
+- `UNIFIED_MCP_INTEGRATION_RULES.md` - Primary orchestration guide (19 MCP tools)
+- `MappingRules.mdc` - Legacy comprehensive rules (768 lines) 
+- `mcp-rules.mdc` - MCP development best practices (970 lines)
+- `cognitivemind/` folder - Queen agent specifications and workflow
+- `tasklist_template_tochange.md` - Predefined workflow task templates
+- `phase3_coding_rules.mdc` - Kotlin code generation standards and patterns
+
+---
+
+# 🚀 MAIN WORKFLOW ORCHESTRATOR
+- command: runIntegrationWorkflow # Auto-invoked by MappingRules.mdc and UNIFIED_MCP_INTEGRATION_RULES.md
+  prompt: |
+    🧠 **You are the "Queen" agent** - Master orchestrator for specialized AI worker agents.
+
+    ## 📋 OPERATIONAL KNOWLEDGE SOURCES (Load in Order):
+    1. **PRIMARY:** `.cursor/rules/MappingRules.mdc` - UNIFIED comprehensive orchestration guide with 19 verified MCP tools (v2.0)
+    2. **COGNITIVE:** `.cursor/rules/cognitivemind/masterprompt.md` - Queen agent protocol
+    3. **REFERENCE:** `.cursor/rules/UNIFIED_MCP_INTEGRATION_RULES.md` - Alternative unified guide (for reference)
+    4. **CONTEXT:** All files in `.cursor/rules/cognitivemind/` folder
+
+    ## 🎯 MANDATORY FIRST STEPS:
+    1. **Comprehensive Analysis:** Analyze user requirements, source/target systems, complexity assessment
+    2. **Load Predefined Task Template:** Use `tasklist_template_tochange.md` as base for workflow tasks
+    3. **Create PLANNING.md** using BDI model (Beliefs, Desires, Intentions) with strategic overview
+    4. **Create TASKS.md** with detailed phase-gated checkboxes and decision points from template
+    5. **Create STATUS.md** for live orchestration dashboard and progress tracking
+    6. **Run `test_rag_system()`** to verify environment before any tool execution
+    
+    ## 🧠 ORCHESTRATION PROTOCOL:
+    **After EVERY step, the orchestrator MUST:**
+    1. **🔍 ASSESS:** Current phase, artifacts, tool outputs, quality
+    2. **📊 EVALUATE:** Phase gates, progress, errors, approach effectiveness  
+    3. **🎯 DECIDE:** Next MCP tool, prerequisites, iteration needs
+    4. **📝 UPDATE:** TASKS.md (✅), STATUS.md, decision rationale
+    5. **🔄 LOOP:** Return to assess before next action
+
+    ## 🔄 PHASE-GATED EXECUTION:
+    - **Phase 0:** Bootstrap & Environment Setup ✅
+    - **Phase 1:** Data Ingestion (6 RAG tools) ✅  
+    - **Phase 2:** Mapping & Analysis (4 analysis tools) ✅
+    - **Phase 3:** Code Generation (3 consolidated tools) ✅ + Phase 3 Coding Rules Integration
+    - **Phase 4:** Learning Persistence ✅
+
+    ## 📝 LOGGING REQUIREMENTS:
+    - Log all results in `memorylog.md` 
+    - Log all errors in `error.log.md`
+    - Use memory protocol from `5_memory-protocol.md`
+
+    **Begin by asking for the initial inputs required to start the workflow as specified in MappingRules.mdc v2.0**
+
+# 📋 TASK TEMPLATE INTEGRATION
+- command: loadTaskTemplate
+  prompt: |
+    📋 **Load Predefined Task Template** - Load and customize task template for workflow.
+    
+    ## 📋 TASK TEMPLATE SEQUENCE:
+    1. **Load Template:**
+    ```json
+    {
+      "tool": "read_file",
+      "arguments": {
+        "target_file": ".cursor/rules/tasklist_template_tochange.md"
+      }
+    }
+    ```
+    
+    2. **Customize for Product:**
+    - Replace all `[PLACEHOLDER]` values with product-specific information
+    - Update task priorities based on project requirements
+    - Add product-specific validation steps
+    
+    3. **Load into Task Management:**
+    ```json
+    {
+      "tool": "mcp_connector_mcp_dynamic_task_management",
+      "arguments": {
+        "action": "add_manual_task",
+        "task_content": "Customized task from template",
+        "priority": "high"
+      }
+    }
+    ```
+    
+    4. **Validate Template Integration:**
+    - Check all placeholders are replaced
+    - Verify task priorities are appropriate
+    - Ensure MCP tool references are correct
+    - Validate phase-gated workflow structure
+
+# ⚙️ PHASE 3 CODING RULES INTEGRATION
+- command: integratePhase3Rules
+  prompt: |
+    ⚙️ **Integrate Phase 3 Coding Rules** - Apply Kotlin coding standards to code generation.
+    
+    ## ⚙️ PHASE 3 RULES INTEGRATION SEQUENCE:
+    1. **Load Phase 3 Rules:**
+    ```json
+    {
+      "tool": "read_file",
+      "arguments": {
+        "target_file": ".cursor/rules/phase3_coding_rules.mdc"
+      }
+    }
+    ```
+    
+    2. **Reference Rules in Code Generation:**
+    - Apply Controller/Service/Mapper pattern
+    - Implement security annotations (@Secured)
+    - Add SLF4J logging throughout
+    - Ensure null safety and error handling
+    - Follow TDD principles
+    
+    3. **Generate Code with Rules:**
+    ```json
+    {
+      "tool": "mcp_connector_mcp_generate_kotlin_mapping_code",
+      "arguments": {
+        "mapping_report_path": "path/to/mapping_report.md",
+        "output_directory": "outputs/phase3"
+      }
+    }
+    ```
+    
+    4. **Validate Against Rules:**
+    - Check Controller/Service/Mapper architecture
+    - Verify security annotations are present
+    - Validate logging implementation
+    - Check null safety and error handling
+    - Ensure TDD test coverage
+    
+    5. **Quality Suite with Rules:**
+    ```json
+    {
+      "tool": "mcp_connector_mcp_phase3_quality_suite",
+      "arguments": {
+        "kotlin_file_path": "outputs/phase3/generated_mapper.kt",
+        "mapping_report_path": "path/to/mapping_report.md"
+      }
+    }
+    ```
+
+# 🔧 ENVIRONMENT BOOTSTRAP
+- command: bootstrapEnvironment
+  prompt: |
+    🔧 **Bootstrap Development Environment** - FIRST command for new projects/machines.
+    
+    ## 📋 BOOTSTRAP SEQUENCE:
+    1. **Copy Rules Structure:**
+    ```json
+    {
+      "tool": "copy_rules_to_working_directory",
+      "arguments": {
+        "target_directory": ""
+      }
+    }
+    ```
+    
+    2. **Verify Environment:**
+    ```json
+    {
+      "tool": "test_rag_system",
+      "arguments": {}
+    }
+    ```
+    
+    3. **🚨 CRITICAL - File Verification Before Upload:**
+    ```json
+    {
+      "tool": "read_multiple_files",
+      "arguments": {
+        "paths": [
+          "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/flip/hris-absence-management.yml",
+          "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/stackone/api_stackone.json"
+        ]
+      }
+    }
+    ```
+    
+    4. **Validate Rule Files Copied:**
+    - ✅ `MappingRules.mdc` - PRIMARY unified orchestration guide (v2.0)
+    - ✅ `UNIFIED_MCP_INTEGRATION_RULES.md` - Reference guide
+    - ✅ `cognitivemind/` folder - Queen agent specifications
+    - ✅ `learninigs/` folder - Long-term memory docs
+    
+    5. **Environment Ready Gate:** Proceed only when RAG connectivity verified, all rule files present, and API specs accessible via `read_multiple_files`. 
+
+# 📝 MEMORY & STATE MANAGEMENT
+- command: viewMemoryLog
+  prompt: |
+    📝 **View Memory Log** - Display recent workflow history.
+    
+    Retrieve and display the last 5 entries from `memorylog.md`. Format according to:
+    - Memory protocol: `5_memory-protocol.md`
+    - Include: timestamp, phase, action, tools_used, outputs, status
+    - Show: Phase progression, tool success/failure, key artifacts generated
+
+- command: checkWorkflowStatus  
+  prompt: |
+    📊 **Check Workflow Status** - Comprehensive state summary.
+    
+    ## 📋 REPORT STRUCTURE:
+    1. **Current Phase:** Which of the 5 phases (0-4) is active
+    2. **GlobalWorkflowState:** Reference `4_state-object-schema.md`
+    3. **Artifacts Generated:** List all `.md`, `.json`, `.kt` files created
+    4. **Tool Usage:** Which of the 19 MCP tools have been called
+    5. **Phase Gates:** Which exit criteria have been met ✅ or pending ⏳
+    6. **Next Actions:** What tools/steps are required to proceed
+    
+    **Format:** Use checkboxes and status indicators for clear progress tracking.
+
+# 🧠 LONG-TERM MEMORY MANAGEMENT
+- command: persistLearnings
+  prompt: |
+    🧠 **Persist Learnings to Long-term Memory** - Only after verification gates pass.
+    
+    ## ✅ PERSISTENCE CRITERIA (BOTH Required):
+    1. **Phase 2 Verified:** All endpoints verified (verification rate = 100%)
+    2. **Phase 3 Verified:** Implementation correct (tests pass + human approval)
+    
+    ## 🔧 PERSISTENCE TOOL:
+    ```json
+    {
+      "tool": "persist_phase_learnings",
+      "arguments": {
+        "phase2_report_path": "/abs/path/simple_reasoning_agent_report_*.md",
+        "verification_file_path": "/abs/path/endpoints_to_research_*.md", 
+        "phase3_report_path": "/abs/path/kotlin_codegen_report_*.md",
+        "phase3_verified": true,
+        "collection_name": "long_term_memory",
+        "output_directory": "/abs/path/reports",
+        "embed": true
+      }
+    }
+    ```
+    
+    ## 📚 RETRIEVAL STRATEGY:
+    **Before Phase 2:** Query `long_term_memory` for: "mapping strategies", "endpoint validation", "field analysis"
+    **Before Phase 3:** Query `long_term_memory` for: "code generation", "TDD patterns", "Kotlin best practices"
+    
+    Use tools: `query_api_specification()` or `enhanced_rag_analysis()` with collection_name="long_term_memory"
+
+# 🔍 WORKFLOW DIAGNOSTICS  
+- command: diagnoseWorkflow
+  prompt: |
+    🔍 **Diagnose Workflow Issues** - Troubleshoot common problems.
+    
+    ## 🚨 DIAGNOSTIC CHECKLIST:
+    1. **Environment Issues:**
+       - ✅ RAG connectivity (`test_rag_system()`)
+       - ✅ Rules copied (`copy_rules_to_working_directory()`)
+       - ✅ Required files present
+       - ✅ API specs accessible (`read_multiple_files()` with full paths)
+    
+    2. **Phase-Specific Issues:**
+       - **Phase 0:** Bootstrap failures, missing environment variables
+       - **Phase 1:** Upload failures, collection errors, `RAGChunkingMixin` import errors
+       - **Phase 2:** Mapping failures, verification issues  
+       - **Phase 3:** Code generation errors, test failures
+       - **Phase 4:** Learning persistence errors
+    
+    3. **Tool-Specific Issues:**
+       - Check which of the 19 MCP tools are failing
+       - Verify absolute paths are used
+       - Check file existence before tool calls
+    
+    4. **Recovery Actions:**
+       - Reset collections: `delete_api_specification()`
+       - Restart from phase gate
+       - Use fallback tools per MappingRules.mdc v2.0
+    
+    **Output:** Diagnostic report with specific fix recommendations.
+
+# 🛠️ MCP TOOL REFERENCE
+- command: showMCPTools
+  prompt: |
+    🛠️ **MCP Tool Quick Reference** - Display all 19 verified working tools.
+    
+    ## 📚 TOOL INVENTORY BY PHASE:
+    
+    ### **Phase 1 - Data Extraction & RAG (6 tools):**
+    1. `test_rag_system()` - Test RAG connectivity
+    2. `list_available_api_specs()` - List collections
+    3. `upload_api_specification(openapi_file_path, collection_name, metadata)` - Upload specs ⚠️ Use `read_multiple_files` FIRST
+    4. `query_api_specification(query, collection_name, limit, score_threshold)` - Semantic search
+    5. `delete_api_specification(collection_name)` - Delete collections
+    6. `upload_learnings_document(file_path, collection_name, metadata)` - Upload learning docs
+    
+    ### **Phase 2 - Analysis & Mapping (4 tools):**
+    7. `enhanced_rag_analysis(fields_to_analyze, collection_name, context_topic)` - Enhanced analysis
+    8. `reasoning_agent(source_analysis_path, api_spec_path, output_directory)` - **MAIN ORCHESTRATOR**
+    9. `iterative_mapping_with_feedback(source_fields, target_collection, api_spec_path)` - ReAct pattern
+    10. `analyze_json_fields_with_rag(webhook_json_path, current_directory, collection_name)` - Combined analysis
+    
+    ### **Phase 3 - Code Generation (4 tools - CONSOLIDATED):**
+    11. `generate_kotlin_mapping_code(mapping_report_path)` - Generate prompts
+    12. `phase3_generate_mapper(mapping_report_path, output_directory)` - **END-TO-END KOTLIN**
+    13. `phase3_quality_suite(kotlin_file_path, mapping_report_path)` - **AUDIT + TDD**
+    14. `phase3_select_best_candidate(kotlin_files, mapping_report_path)` - **CONSISTENCY SELECTOR**
+    
+    ### **Phase 4 - TDD Validation (1 tool - NEW):**
+    15. `phase4_tdd_validation(kotlin_file_path, mapping_report_path)` - **TDD VALIDATION WITH CURSOR LLM**
+    
+    ### **Shared Utilities (5 tools):**
+    16. `copy_rules_to_working_directory(target_directory)` - Bootstrap
+    17. `get_rules_source_info()` - View structure  
+    18. `get_direct_api_mapping_prompt(api_spec_path, analysis_md_path)` - Direct analysis
+    19. `persist_phase_learnings(phase2_report_path, verification_file_path, phase3_report_path, phase3_verified)` - Long-term memory
+    20. `analyze_fields_with_rag_and_llm()` - Alternative analysis (commented out)
+    
+    ## 🎯 TOOL SELECTION GUIDE:
+    - **API File Verification:** ALWAYS use `read_multiple_files` before `upload_api_specification`
+    - **Small API spec (<50KB):** Use `get_direct_api_mapping_prompt`
+    - **Large API spec (>50KB):** Use `enhanced_rag_analysis`
+    - **Complex orchestration:** Use `reasoning_agent`
+    - **End-to-end code generation:** Use `phase3_generate_mapper`
+    - **Quality assurance:** Use `phase3_quality_suite`
+    - **TDD validation with Cursor LLM:** Use `phase4_tdd_validation`
+    
+    ## 🚨 CRITICAL ERROR PREVENTION:
+    **NEVER** call `upload_api_specification` directly. Always use this sequence:
+    1. `read_multiple_files` with full absolute paths
+    2. Verify files are accessible 
+    3. Then call `upload_api_specification`
+    
+    **Reference:** See `MappingRules.mdc` v2.0 for complete usage details and workflow guidance.
+
+# 🎯 ORCHESTRATION COMMANDS
+- command: assessAndDecide
+  prompt: |
+    🎯 **Assess Current State & Decide Next Action** - Critical orchestration checkpoint.
+    
+    ## 📊 CURRENT STATE ASSESSMENT:
+    1. **Phase Analysis:**
+       - What phase are we currently in? (0/1/2/3/4)
+       - What was the last completed step?
+       - What artifacts have been generated?
+       - Are there any errors or issues?
+    
+    2. **Tool Execution Review:**
+       - Which MCP tools have been successfully executed?
+       - What were the outputs and their quality?
+       - Are all prerequisites for next steps met?
+    
+    3. **Progress Evaluation:**
+       - Are phase gate criteria satisfied?
+       - Is the current approach working effectively?
+       - Do we need to iterate or change strategy?
+    
+    ## 🎯 DECISION FRAMEWORK:
+    Based on current state, determine:
+    - **Next MCP Tool:** Which tool should be executed next?
+    - **Prerequisites:** What needs to be verified first?
+    - **Strategy:** Should we continue current approach or adapt?
+    - **Timeline:** Any urgency or dependencies to consider?
+    
+    ## 📝 REQUIRED ACTIONS:
+    1. Update TASKS.md with ✅ for completed items
+    2. Update STATUS.md with current progress and next decision point
+    3. Log decision rationale and any course corrections
+    4. Clearly state the next action to be taken
+    
+    **Output:** Clear decision on next step with rationale and updated documentation.

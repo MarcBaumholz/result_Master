@@ -1,0 +1,166 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "PUT /{companyDomain}/v1/employees/{employeeId}/time_off/request",
+    "reasoning": "Most relevant endpoint for creating time off requests in BambooHR",
+    "required_structure": "Simple flat structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employeeId",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (path parameter)",
+      "notes": "Employee ID passed as path parameter in URL, not in request body",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "timeOffTypeId",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.timeOffTypeId)",
+      "notes": "Absence type maps to timeOffTypeId integer field",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.status)",
+      "notes": "Direct 1:1 mapping - both are string fields",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.start)",
+      "notes": "Start date maps to start field - both string format",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.end)",
+      "notes": "End date maps to end field - both string format",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": null,
+      "ground_truth_path": null,
+      "notes": "No equivalent in BambooHR TimeOffRequest schema - half day logic not supported",
+      "mapping_type": "Unmappable"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": null,
+      "ground_truth_path": null,
+      "notes": "No equivalent in BambooHR TimeOffRequest schema - half day logic not supported",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.amount)",
+      "notes": "Direct 1:1 mapping - both are integer fields",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": null,
+      "ground_truth_path": null,
+      "notes": "No unit field in BambooHR amount - amount is just integer without unit specification",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "notes",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.notes)",
+      "notes": "Employee note maps to notes array - requires conversion from string to array format",
+      "mapping_type": "Conversion"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 7,
+    "unmappable_fields": 3,
+    "mapping_types": {
+      "Direct": 4,
+      "Conversion": 3,
+      "Unmappable": 3
+    },
+    "complexity_analysis": {
+      "simple_mappings": 4,
+      "conversion_mappings": 3,
+      "unmappable_fields": 3
+    },
+    "confidence_scores": {
+      "high_confidence": 7,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 3
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "employee_note",
+        "from_type": "string",
+        "to_type": "array",
+        "conversion_method": "Convert string to array format for notes field"
+      }
+    ],
+    "path_parameter_requirements": [
+      {
+        "field": "employee_external_id",
+        "requirement": "Must be passed as path parameter in URL, not in request body"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Convert employee_note from string to array format",
+      "Pass employee_external_id as path parameter in URL"
+    ],
+    "missing_fields_handling": [
+      "half_day fields: Convert to full day logic or handle separately",
+      "unit: Calculate from amount if needed or use default unit"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "timeOffTypeId must be valid absence type ID in system",
+      "employeeId must be valid employee ID in system"
+    ],
+    "business_logic_considerations": [
+      "API uses simple flat structure - easier to implement",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "PUT",
+    "endpoint_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["timeOffTypeId", "start", "end", "status"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 7,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

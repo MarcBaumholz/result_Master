@@ -1,0 +1,114 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "EmployeeTime_externalCode",
+      "ground_truth_path": "/EmployeeTimePOL or /EmployeeTimeNLD - externalCode parameter",
+      "notes": "Map to SAP SuccessFactors EmployeeTime externalCode field for cross-system employee identification",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id", 
+      "target_field": "externalCode",
+      "ground_truth_path": "/AbsenceCountingMethod or /TimeAccountTypeAUS - externalCode parameter",
+      "notes": "Map to SAP absence type external code for categorization and policy enforcement",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/RecalculationBasedField - status field in response body",
+      "notes": "Map to SAP absence status field (Submitted, Approved, Rejected) for workflow state management",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "startDate",
+      "ground_truth_path": "/EmployeeTime entities - startDate field",
+      "notes": "Map to SAP start date field with YYYY-MM-DD format validation and timezone consideration",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "source_field": "end_date", 
+      "target_field": "endDate",
+      "ground_truth_path": "/EmployeeTime entities - endDate field",
+      "notes": "Map to SAP end date field, ensuring end_date >= start_date for logical consistency",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "startHalfDay",
+      "ground_truth_path": "/WorkScheduleDay - half day indicator fields",
+      "notes": "Map to SAP half-day start indicator (AM/PM or boolean) for partial day absence tracking",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "endHalfDay", 
+      "ground_truth_path": "/WorkScheduleDay - half day indicator fields",
+      "notes": "Map to SAP half-day end indicator, paired with end_date for precise duration calculation",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/SFOData.AccrualCalculationBase - amount field",
+      "notes": "Map to SAP numeric amount field for time quantity, must be paired with unit field",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/SFOData.AvailableTimeType - unit field (HOURS, DAYS)",
+      "notes": "Map to SAP standardized unit field (HOURS/DAYS) providing context for amount field",
+      "mapping_type": "Conversion"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "note",
+      "ground_truth_path": "/EmployeeTimeMEX or /EmployeeTimeNLD - note/comment fields",
+      "notes": "Map to SAP employee note field for absence comments, ensure compliance with length limits",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "SAP SuccessFactors Time Management API - Enhanced RAG analysis with semantic field mapping and business context",
+  "total_fields_identified": 10,
+  "mapping_complexity_summary": {
+    "Direct": 4,
+    "Conversion": 6, 
+    "Logical": 0,
+    "Unmappable": 0
+  },
+  "api_endpoints_referenced": [
+    "/EmployeeTimePOL",
+    "/EmployeeTimeNLD", 
+    "/AbsenceCountingMethod",
+    "/TimeAccountTypeAUS",
+    "/RecalculationBasedField",
+    "/WorkScheduleDay",
+    "/SFOData.AccrualCalculationBase",
+    "/SFOData.AvailableTimeType",
+    "/EmployeeTimeMEX"
+  ],
+  "validation_notes": [
+    "Validate external IDs against existing SAP records",
+    "Use consistent ISO 8601 date formats",
+    "Ensure end_date >= start_date for logical consistency", 
+    "Pair amount field with unit field for proper context",
+    "Test with SAP sandbox environment before production",
+    "Reference SAP Help Portal for country-specific behaviors"
+  ]
+}

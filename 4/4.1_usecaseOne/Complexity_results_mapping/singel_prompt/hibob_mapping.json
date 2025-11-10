@@ -1,0 +1,180 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /timeoff/employees/{id}/requests",
+    "reasoning": "Most relevant endpoint for creating time off requests in HiBob",
+    "required_structure": "Simple flat structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "id",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (path parameter)",
+      "notes": "Employee ID passed as path parameter in URL, not in request body",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "policyType",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.policyType)",
+      "notes": "Absence type maps to policyType string field",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't accept status in request - likely determined by system after processing",
+      "mapping_type": "Unmappable"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "startDate",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.startDate)",
+      "notes": "Direct mapping - start date field",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "endDate",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.endDate)",
+      "notes": "Direct mapping - end date field",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "startDatePortion",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.startDatePortion)",
+      "notes": "Half day logic maps to startDatePortion enum (all_day, morning, afternoon)",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "endDatePortion",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.endDatePortion)",
+      "notes": "Half day logic maps to endDatePortion enum (all_day, morning, afternoon)",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "days",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.days)",
+      "notes": "Amount maps to days field for day-based calculations",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track units separately - uses days/hours fields",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "description",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.description)",
+      "notes": "Employee note maps to description field",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 8,
+    "unmappable_fields": 2,
+    "mapping_types": {
+      "Direct": 4,
+      "Conversion": 4,
+      "Unmappable": 2
+    },
+    "complexity_analysis": {
+      "simple_mappings": 4,
+      "conversion_mappings": 4,
+      "unmappable_fields": 2
+    },
+    "confidence_scores": {
+      "high_confidence": 8,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 2
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "start_half_day",
+        "from_type": "boolean",
+        "to_type": "enum",
+        "conversion_method": "Convert boolean to enum: true -> morning/afternoon, false -> all_day"
+      },
+      {
+        "field": "end_half_day",
+        "from_type": "boolean",
+        "to_type": "enum",
+        "conversion_method": "Convert boolean to enum: true -> morning/afternoon, false -> all_day"
+      },
+      {
+        "field": "amount",
+        "from_type": "number",
+        "to_type": "number",
+        "conversion_method": "Map to days field for day-based calculations"
+      }
+    ],
+    "path_parameter_requirements": [
+      {
+        "field": "employee_external_id",
+        "requirement": "Must be passed as path parameter in URL, not in request body"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Convert half_day boolean fields to enum values (all_day, morning, afternoon)",
+      "Map amount to days field for day-based calculations",
+      "Pass employee_external_id as path parameter in URL"
+    ],
+    "missing_fields_handling": [
+      "status: Consider if handled by system or different endpoint",
+      "unit: Use days field for day-based calculations"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "policyType must be valid policy type in system",
+      "employeeId must be valid employee ID in system",
+      "startDatePortion and endDatePortion must be valid enum values"
+    ],
+    "business_logic_considerations": [
+      "API uses simple flat structure - easier to implement",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/timeoff/employees/{id}/requests",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["policyType", "startDate", "endDate"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 8,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

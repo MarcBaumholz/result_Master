@@ -1,0 +1,109 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.employee_id)",
+      "notes": "Direct mapping - Stackone uses employee_id in request body for time off creation",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "type",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.type)",
+      "notes": "Direct mapping - Stackone uses 'type' field for absence type in time off requests",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.status)",
+      "notes": "Direct mapping - Status field maps directly to Stackone time off request status",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.start_date)",
+      "notes": "Direct mapping - Start date field maps directly to Stackone time off request start_date (string format)",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.end_date)",
+      "notes": "Direct mapping - End date field maps directly to Stackone time off request end_date (string format)",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.start_half_day)",
+      "notes": "Direct mapping - Boolean field indicating if time off starts halfway through the day",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.end_half_day)",
+      "notes": "Direct mapping - Boolean field indicating if time off ends halfway through the day",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "duration",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (TimeOff.duration)",
+      "notes": "Conversion mapping - Stackone uses 'duration' field instead of 'amount'. May need calculation from start_date/end_date or direct value mapping",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "duration",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (TimeOff.duration)",
+      "notes": "Logical mapping - Stackone uses single 'duration' field (string) instead of separate amount/unit. Unit information may be embedded in duration format or calculated from date range",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "passthrough",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (HrisCreateTimeOffRequestDto.passthrough)",
+      "notes": "Logical mapping - Stackone uses 'passthrough' object for additional data. Employee note would need to be embedded in passthrough object structure",
+      "mapping_type": "Logical"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "Stackone Unified HRIS API - Time Off Management. Primary endpoint: POST /unified/hris/employees/{id}/time_off using HrisCreateTimeOffRequestDto schema",
+  "total_fields_identified": 10,
+  "api_endpoints": {
+    "primary_create": "POST /unified/hris/employees/{id}/time_off",
+    "alternative_create": "POST /unified/hris/time_off",
+    "list_requests": "GET /unified/hris/employees/{id}/time_off",
+    "get_request": "GET /unified/hris/time_off/{id}",
+    "get_employee_request": "GET /unified/hris/employees/{id}/time_off/{subResourceId}"
+  },
+  "schema_references": {
+    "request_schema": "HrisCreateTimeOffRequestDto",
+    "response_schema": "TimeOff",
+    "status_enum": "TimeOffStatusEnum",
+    "type_enum": "TimeOffTypeEnum"
+  },
+  "mapping_complexity": {
+    "direct_mappings": 7,
+    "conversion_mappings": 1,
+    "logical_mappings": 2,
+    "unmappable_fields": 0,
+    "complexity_score": "Medium"
+  }
+}

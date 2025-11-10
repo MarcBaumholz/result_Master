@@ -1,0 +1,107 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "worker_id",
+      "ground_truth_path": "/LeaveRequest (worker_id)",
+      "confidence": 0.95,
+      "notes": "Direct mapping to worker_id in LeaveRequest schema",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "leave_type_id",
+      "ground_truth_path": "/LeaveRequest (leave_type_id)",
+      "confidence": 0.90,
+      "notes": "Either leave_type_id or leave_policy_id must be provided",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/LeaveRequest (status)",
+      "confidence": 0.90,
+      "notes": "Conversion to Rippling enum (PENDING/APPROVED/REJECTED/CANCELED)",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "start_date",
+      "ground_truth_path": "/LeaveRequest (start_date)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "end_date",
+      "ground_truth_path": "/LeaveRequest (end_date)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "start_time",
+      "ground_truth_path": "/LeaveRequest (start_time)",
+      "confidence": 0.85,
+      "notes": "Logical: if true, set start_time to midday (12:00), if false set to start of day (00:00)",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "end_time",
+      "ground_truth_path": "/LeaveRequest (end_time)",
+      "confidence": 0.85,
+      "notes": "Logical: if true, set end_time to midday (12:00), if false set to end of day (23:59)",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "target_field": "number_of_minutes_requested",
+      "ground_truth_path": "/LeaveRequest (number_of_minutes_requested)",
+      "confidence": 0.90,
+      "notes": "Convert amount * unit to minutes: days*1440, hours*60, minutes*1",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "implicit_minutes",
+      "ground_truth_path": "/LeaveRequest (implicit)",
+      "confidence": 0.95,
+      "notes": "Rippling works with minutes internally - unit conversion logic required",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "comments",
+      "ground_truth_path": "/LeaveRequest (comments)",
+      "confidence": 0.90,
+      "notes": "Direct mapping to comments field",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "unmappable_analysis": {},
+  "mapping_summary": {
+    "direct_mappings": 5,
+    "conversion_mappings": 2,
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "mapping_coverage": "100%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "LeaveRequest schema (Response only)",
+      "DayOff schema for detailed time tracking"
+    ],
+    "half_day_logic": "Use start_time/end_time with midday logic (12:00 for half-day, 00:00/23:59 for full-day)",
+    "unit_logic": "Convert to minutes: days*1440, hours*60, minutes*1",
+    "api_limitations": "No explicit POST endpoint found - LeaveRequest appears to be response-only schema",
+    "alternative_approach": "May require custom object or different API endpoint for creation"
+  },
+  "enhancement_confidence": 0.92,
+  "total_fields_identified": 10
+}

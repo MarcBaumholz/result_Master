@@ -1,0 +1,116 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "userId",
+      "ground_truth_path": "/EmployeeTime (requestBody.userId)",
+      "confidence": 0.95,
+      "notes": "Employee ID mapped to userId field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "timeType",
+      "ground_truth_path": "/EmployeeTime (requestBody.timeType)",
+      "confidence": 0.90,
+      "notes": "Absence type mapped to timeType field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "startDate",
+      "ground_truth_path": "/EmployeeTime (requestBody.startDate)",
+      "confidence": 0.95,
+      "notes": "Start date mapped to startDate in SAP SuccessFactors (Date format: /Date(timestamp)/)",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "endDate",
+      "ground_truth_path": "/EmployeeTime (requestBody.endDate)",
+      "confidence": 0.95,
+      "notes": "End date mapped to endDate in SAP SuccessFactors (Date format: /Date(timestamp)/)",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "fractionQuantity OR startTime",
+      "ground_truth_path": "/EmployeeTime (requestBody.fractionQuantity OR requestBody.startTime)",
+      "confidence": 0.90,
+      "notes": "Logical: Option 1 - fractionQuantity: if true set to 0.5, if false set to 1.0. Option 2 - startTime: if true set to PT00H00M00S (start of day), if false set to PT12H00M00S (midday).",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "fractionQuantity OR endTime",
+      "ground_truth_path": "/EmployeeTime (requestBody.fractionQuantity OR requestBody.endTime)",
+      "confidence": 0.90,
+      "notes": "Logical: Option 1 - fractionQuantity: if true set to 0.5, if false set to 1.0. Option 2 - endTime: if true set to PT12H00M00S (midday), if false set to PT23H59M59S (end of day).",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "target_field": "quantityInDays",
+      "ground_truth_path": "/EmployeeTime (requestBody.quantityInDays)",
+      "confidence": 0.95,
+      "notes": "Amount mapped to quantityInDays for Day(s) units or quantityInHours for Hour(s) units based on TimeType.unit from AvailableTimeType lookup",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "derived_from_timeType_lookup",
+      "ground_truth_path": "/rest/timemanagement/absence/v1/availableTimeTypes (derived from unit field)",
+      "confidence": 0.95,
+      "notes": "Logical: lookup unit (Day(s)/Hour(s)) from AvailableTimeType.unit field for given timeType value",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "comment",
+      "ground_truth_path": "/EmployeeTime (requestBody.comment)",
+      "confidence": 0.90,
+      "notes": "Employee note mapped to comment field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [
+    "status"
+  ],
+  "unmappable_analysis": {
+    "status": {
+      "reason": "Status is managed by SAP workflow system and not settable during creation",
+      "api_limitation": "Field available in response only (approvalStatus) - managed by workflow"
+    }
+  },
+  "mapping_summary": {
+    "direct_mappings": 4,
+    "conversion_mappings": 1,
+    "logical_mappings": 4,
+    "unmappable_fields": 1,
+    "mapping_coverage": "90%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/EmployeeTime (POST)",
+      "/rest/timemanagement/absence/v1/availableTimeTypes (GET)"
+    ],
+    "half_day_logic": "Option 1 - fractionQuantity: 0.5 for half-day, 1.0 for full-day. Option 2 - startTime/endTime: PT00H00M00S (start), PT12H00M00S (midday), PT23H59M59S (end of day)",
+    "unit_logic": "Lookup unit from AvailableTimeType.unit field based on timeType value",
+    "amount_logic": "Use quantityInDays for Day(s) units, quantityInHours for Hour(s) units based on TimeType.unit",
+    "workflow_notes": "SAP manages status through workflow system - not directly settable",
+    "date_format": "SAP uses /Date(timestamp)/ format for dates",
+    "time_format": "SAP uses PT15H51M04S format for times (ISO 8601 duration)",
+    "key_insights": [
+      "userId is the actual employee identifier, not EmployeeTime_externalCode",
+      "timeType is the correct field for absence type, not TimeType_externalCode",
+      "fractionQuantity is the primary field for half-day logic",
+      "startTime/endTime provide precise timing control for half-day logic",
+      "Unit must be derived from AvailableTimeType lookup based on timeType"
+    ]
+  },
+  "enhancement_confidence": 0.95,
+  "total_fields_identified": 10
+}

@@ -1,0 +1,262 @@
+# This file defines the exact sequence of operations for the Queen agent,
+# translating the logic from Mapping_flow_masterthesis.md into a machine-readable plan.
+
+workflow_name: "Create HR API Connector"
+
+tasks:
+  - id: -1
+    description: "Preflight: verify environment, venv/.env, and RAG connectivity."
+    worker_agent: "PreflightAgent"
+    phase: 1
+    inputs:
+      output_directory: "output_directory"
+    outputs:
+      preflight_ok: "preflight_ok"
+    awaits_human_input: false
+  - id: 0
+    description: "Generate high-level execution plan (plan.md) with parent tasks and initial Relevant API Elements."
+    worker_agent: "PlanningAgent"
+    phase: 1
+    inputs:
+      spec_paths:
+        - "source_spec_path"
+        - "target_spec_path"
+      user_task: "user_task_description"
+      output_directory: "output_directory"
+    outputs:
+      plan_path: "execution_plan_path"
+      guidelines_digest: "guidelines_digest_path"
+    awaits_human_input: true
+
+  - id: 0.5
+    description: "Expand plan into detailed sub-tasks and maintain Relevant API Elements manifest."
+    worker_agent: "PlanningAgent"
+    phase: 1
+    inputs:
+      plan_path: "execution_plan_path"
+      spec_paths:
+        - "source_spec_path"
+        - "target_spec_path"
+    outputs:
+      plan_path: "execution_plan_path"
+    awaits_human_input: false
+  - id: 1
+    description: "Build the RAG knowledge base for source and target APIs."
+    worker_agent: "RAGManagerAgent"
+    phase: 1
+    inputs:
+      source_spec_path: "source_spec_path"
+      target_spec_path: "target_spec_path"
+      source_collection_name: "source_collection_name"
+      target_collection_name: "target_collection_name"
+    outputs:
+      status: "rag_setup_complete"
+      collections: "rag_collections"
+
+  - id: 2
+    description: "Analyze the source JSON to identify relevant fields for mapping."
+    worker_agent: "SourceAnalysisAgent"
+    phase: 1
+    inputs:
+      json_path: "source_json_path"
+      collection_name: "source_collection_name"
+    outputs:
+      analysis_path: "source_field_analysis_path"
+
+  - id: 2.9
+    description: "Phase 1 Summary: Write Memory Report with planning outcomes and analysis artifacts."
+    worker_agent: "MemoryReportAgent"
+    phase: 1
+    inputs:
+      phase_number: 1
+      plan_path: "execution_plan_path"
+      analysis_path: "source_field_analysis_path"
+    outputs: {}
+
+  - id: 3
+    description: "Generate a field mapping between the source analysis and the target API."
+    worker_agent: "MappingAgent"
+    phase: 2
+    inputs:
+      analysis_path: "source_field_analysis_path"
+      spec_path: "target_spec_path"
+      collection_name: "target_collection_name"
+      context: "user_task_description"
+    outputs:
+      report_path: "field_mapping_report_path"
+      mapping_json_path: "mapping_json_path"
+
+  - id: 3.1
+    description: "Tree‑of‑Thought Triangulation: run analyze_json_fields_with_rag → query_api_specification → enhanced_rag_analysis → get_direct_api_mapping_prompt (optimized); compare and record consensus vs. mismatches per field."
+    worker_agent: "MappingAgent"
+    phase: 2
+    inputs:
+      analysis_path: "source_field_analysis_path"
+      spec_path: "target_spec_path"
+      collection_name: "target_collection_name"
+    outputs:
+      triangulation_summary: "triangulation_summary_path"
+
+  - id: 3.5
+    description: "Resolve ambiguities via clarifying questions and persist decisions."
+    worker_agent: "ClarificationAgent"
+    phase: 2
+    inputs:
+      report_path: "field_mapping_report_path"
+      plan_path: "execution_plan_path"
+    outputs:
+      clarifications: "clarifications"
+    awaits_human_input: true
+
+  - id: 4
+    description: "Verify, review, and validate the mapping, requiring human approval."
+    worker_agent: "ReviewAgent"
+    phase: 2
+    inputs:
+      report_path: "field_mapping_report_path"
+      spec_path: "target_spec_path"
+      triangulation_summary: "triangulation_summary_path"
+      verification_report_path: "verification_report_path"
+    outputs:
+      approval_status: "human_approval_received"
+    awaits_human_input: true # This flag tells the Queen to pause the workflow.
+
+  - id: 3.8
+    description: "Run comprehensive API specification verification before review."
+    worker_agent: "ReviewAgent"
+    phase: 2
+    inputs:
+      report_path: "field_mapping_report_path"
+      spec_path: "target_spec_path"
+    outputs:
+      verification_report_path: "verification_report_path"
+      verification_passed: "verification_passed"
+
+  - id: 4.9
+    description: "Phase 2 Summary: Write Memory Report with mapping outcomes and clarifications."
+    worker_agent: "MemoryReportAgent"
+    phase: 2
+    inputs:
+      phase_number: 2
+      plan_path: "execution_plan_path"
+      mapping_report_path: "field_mapping_report_path"
+      mapping_json_path: "mapping_json_path"
+      clarifications: "clarifications"
+    outputs: {}
+
+  - id: 5
+    description: "Generate the Kotlin connector code based on the validated mapping."
+    worker_agent: "CodeGenerationAgent"
+    phase: 3
+    requires_human_approval: true
+    inputs:
+      report_path: "field_mapping_report_path"
+      mapping_json_path: "mapping_json_path"
+      clarifications: "clarifications"
+      plan_path: "execution_plan_path"
+    outputs:
+      code_path: "generated_kotlin_code_path"
+
+  - id: 5.1
+    description: "Generate Kotlin code for direct 1:1 field mappings."
+    worker_agent: "DirectMappingAgent"
+    phase: 3
+    inputs:
+      report_path: "field_mapping_report_path"
+      ground_truth_path: "ground_truth_path"
+      output_directory: "output_directory"
+    outputs:
+      code_path: "direct_mapping_code_path"
+      mapped_fields: "direct_mapped_fields"
+      mapping_count: "direct_mapping_count"
+
+  - id: 5.2
+    description: "Generate Kotlin code for data type conversion mappings."
+    worker_agent: "TypeConversionAgent"
+    phase: 3
+    inputs:
+      report_path: "field_mapping_report_path"
+      ground_truth_path: "ground_truth_path"
+      output_directory: "output_directory"
+    outputs:
+      code_path: "type_conversion_code_path"
+      conversion_functions: "conversion_functions"
+      integrated_code_path: "integrated_conversion_code_path"
+
+  - id: 5.3
+    description: "Generate Kotlin code for complex logic mappings."
+    worker_agent: "ComplexLogicAgent"
+    phase: 3
+    inputs:
+      report_path: "field_mapping_report_path"
+      ground_truth_path: "ground_truth_path"
+      output_directory: "output_directory"
+    outputs:
+      code_path: "complex_logic_code_path"
+      function_names: "complex_function_names"
+      integration_points: "integration_points"
+
+  - id: 5.4
+    description: "Generate comprehensive TDD test suite for all mapper implementations."
+    worker_agent: "TDDTestAgent"
+    phase: 3
+    inputs:
+      report_path: "field_mapping_report_path"
+      mapper_code_path: "generated_kotlin_code_path"
+      output_directory: "output_directory"
+      test_all_scenarios: true
+    outputs:
+      test_suite_path: "tdd_test_suite_path"
+      test_cases_count: "test_cases_count"
+      coverage_summary: "test_coverage_summary"
+
+  - id: 6
+    description: "Compile and run unit tests on the generated code."
+    worker_agent: "ValidationAgent"
+    phase: 3
+    inputs:
+      code_path: "generated_kotlin_code_path"
+      test_data_path: "source_json_path"
+    outputs:
+      results: "test_results"
+
+  - id: 6.5
+    description: "Finalize and save integration artifacts only if tests passed."
+    worker_agent: "ArtifactSaverAgent"
+    phase: 3
+    inputs:
+      plan_path: "execution_plan_path"
+      mapping_report_path: "field_mapping_report_path"
+      mapping_json_path: "mapping_json_path"
+      code_path: "generated_kotlin_code_path"
+      test_results: "test_results"
+      output_directory: "output_directory"
+      user_task: "user_task_description"
+    outputs:
+      integration_directory: "integration_directory"
+      integration_spec_path: "integration_spec_path"
+      mapping_json_path: "mapping_json_path"
+
+  - id: 6.9
+    description: "Phase 3 Summary: Write Memory Report summarizing code generation and test outcomes."
+    worker_agent: "MemoryReportAgent"
+    phase: 3
+    inputs:
+      phase_number: 3
+      code_path: "generated_kotlin_code_path"
+      test_results: "test_results"
+      integration_spec_path: "integration_spec_path"
+    outputs: {}
+
+  - id: 7
+    description: "Generate LEARNINGS.md with key learnings, errors and fixes, do’s and don’ts, improvements."
+    worker_agent: "LearningReportAgent"
+    phase: 3
+    inputs:
+      integration_directory: "integration_directory"
+      memory_log_path: "memory_log_path"
+      test_results: "test_results"
+      mapping_report_path: "field_mapping_report_path"
+      clarifications: "clarifications"
+    outputs:
+      learnings_path: "learnings_path"

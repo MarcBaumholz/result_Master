@@ -1,0 +1,109 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_id",
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/leave-management/requests (POST - formData.employee_id)",
+      "notes": "Direct mapping from Sage employee_id parameter to Flip employee_external_id. Sage uses integer employee IDs that need to be mapped to Flip's external reference system.",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "time_off_policy_id",
+      "target_field": "absence_type_external_id", 
+      "ground_truth_path": "/leave-management/requests (POST - formData.time_off_policy_id)",
+      "notes": "Maps Sage's time_off_policy_id to Flip's absence_type_external_id. Requires cross-reference table between Sage policy IDs and Flip absence type codes for proper categorization.",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/leave-management/requests (GET response - data.status)",
+      "notes": "Sage uses status values like 'Approved', 'Pending', 'Declined' while Flip expects 'REQUESTED', 'APPROVED', 'PENDING'. Requires enum value mapping and normalization.",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "date",
+      "target_field": "start_date",
+      "ground_truth_path": "/leave-management/requests (POST - formData.date for single-day, formData.date_from for multi-day)",
+      "notes": "Sage uses 'date' for single-day requests and 'date_from' for multi-day requests. Both use YYYY-MM-DD format. For single-day requests, start_date equals end_date.",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "date_to",
+      "target_field": "end_date", 
+      "ground_truth_path": "/leave-management/requests (POST - formData.date_to for multi-day requests)",
+      "notes": "For single-day requests, end_date equals start_date (date field). For multi-day requests, uses date_to parameter. Both in YYYY-MM-DD format.",
+      "mapping_type": "Logical"
+    },
+    "start_half_day": {
+      "source_field": "part_of_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/leave-management/requests (POST - formData.part_of_day)",
+      "notes": "Sage uses part_of_day enum: 'all_day', 'first_part_of_day', 'second_part_of_day', 'specific_timespan'. Maps to boolean: true if 'first_part_of_day', false otherwise.",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "part_of_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/leave-management/requests (POST - formData.part_of_day)",
+      "notes": "Sage uses part_of_day enum: 'all_day', 'first_part_of_day', 'second_part_of_day', 'specific_timespan'. Maps to boolean: true if 'second_part_of_day', false otherwise.",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "hours",
+      "target_field": "amount",
+      "ground_truth_path": "/leave-management/requests (POST - formData.hours for partial days)",
+      "notes": "Sage provides hours for partial day requests. For full days, amount should be calculated from date range. For partial days, uses the hours parameter directly.",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/leave-management/policies (GET response - data.unit)",
+      "notes": "Sage policies define unit as 'days' or 'hours'. Flip expects 'DAYS' or 'HOURS' enum values. Direct mapping with case conversion.",
+      "mapping_type": "Conversion"
+    },
+    "employee_note": {
+      "source_field": "details",
+      "target_field": "employee_note",
+      "ground_truth_path": "/leave-management/requests (POST - formData.details)",
+      "notes": "Direct mapping from Sage's details field to Flip's employee_note. Both are optional string fields for employee comments on the absence request.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "Sage HR API leave management system mapping to Flip HRIS absence management. Sage uses form-based requests with policy-based leave types, while Flip uses structured absence creation with external references.",
+  "total_fields_identified": 10,
+  "mapping_complexity_summary": {
+    "Direct": 3,
+    "Conversion": 4, 
+    "Logical": 2,
+    "Unmappable": 0
+  },
+  "key_mapping_challenges": [
+    "Status enum normalization between Sage ('Approved', 'Pending') and Flip ('APPROVED', 'PENDING')",
+    "Policy ID to absence type external ID cross-reference mapping",
+    "Partial day handling with part_of_day enum to boolean conversion",
+    "Amount calculation for full days vs partial days with hours parameter",
+    "Date handling for single-day (date) vs multi-day (date_from/date_to) requests"
+  ],
+  "recommended_implementation_notes": [
+    "Create cross-reference table for Sage policy_id to Flip absence_type_external_id mapping",
+    "Implement status value normalization function for enum conversion",
+    "Add logic to determine if request is single-day or multi-day for proper date field selection",
+    "Calculate amount from date range for full days, use hours parameter for partial days",
+    "Handle part_of_day enum conversion to start_half_day and end_half_day booleans"
+  ]
+}

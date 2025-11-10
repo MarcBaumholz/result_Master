@@ -1,0 +1,80 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_external_id)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "absence_type_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.absence_type_external_id)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.status)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "target_field": "start_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_date)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "end_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_date)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "start_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_half_day)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "target_field": "end_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_half_day)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "target_field": "amount",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.amount)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "target_field": "unit",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.unit)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "target_field": "employee_note",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_note)",
+      "notes": "Direct mapping - same field name in Flip API",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "HiBob to Flip HRIS Absence Management API mapping",
+  "total_fields_identified": 10
+}
+

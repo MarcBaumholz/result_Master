@@ -1,0 +1,109 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "aoid",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (path parameter)",
+      "notes": "Maps to ADP Associate OID path parameter. Direct string mapping with validation against ADP requirements.",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id", 
+      "target_field": "leaveTypeCode.codeValue",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue)",
+      "notes": "Maps to ADP leave type code in request body. Verify allowed values via meta endpoints for compatibility.",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status", 
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].status)",
+      "notes": "Direct mapping to ADP status property. Confirm allowed values (approved, pending) from schema to avoid mismatches.",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "startDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.startDateTime)",
+      "notes": "Maps to ADP startDateTime field. Requires date-time format conversion (YYYY-MM-DD to ISO 8601 date-time).",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "source_field": "end_date", 
+      "target_field": "returnDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.return.request (requestBody.data.transform.leaveReturn.returnDateTime)",
+      "notes": "Maps to ADP returnDateTime field. Requires date-time format conversion and separate return request endpoint.",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "description",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].description)",
+      "notes": "ADP schema doesn't support half-day flags. Store as annotation in description field or use fractional days if supported.",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "description", 
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].description)",
+      "notes": "ADP schema doesn't support half-day flags. Store as annotation in description field or use fractional days if supported.",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "days",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].days)",
+      "notes": "Maps to ADP days property. Assumes days unit - if hours needed, store in description or use custom fields.",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "implicit_days",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].days - implies days unit)",
+      "notes": "ADP days property implies days unit. If other units needed, store in description field or use custom fields.",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "description",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].description)",
+      "notes": "Maps to ADP description property. Ensure character limits align with ADP schema constraints.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "mapping_summary": {
+    "total_fields": 10,
+    "direct_mappings": 3,
+    "conversion_mappings": 4, 
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "mapping_complexity": "Medium - requires date format conversion and logical handling for half-day flags"
+  },
+  "api_endpoints": {
+    "get_leaves": "/hr/v2/workers/{aoid}/leaves",
+    "create_leave_request": "/events/hr/v1/worker.leave.absence.request", 
+    "create_return_request": "/events/hr/v1/worker.leave.return.request",
+    "get_meta": "/hr/v2/workers/{aoid}/leaves/meta"
+  },
+  "processing_context": "ADP Enterprise HR Leave of Absence API - requires separate endpoints for leave creation and return requests, with date-time format conversions and logical handling for half-day granularity",
+  "recommendations": [
+    "Verify allowed leave type codes via meta endpoints before mapping",
+    "Implement date format conversion (YYYY-MM-DD to ISO 8601 date-time)",
+    "Handle half-day flags through description field or fractional days",
+    "Use separate API calls for leave creation and return requests",
+    "Validate Associate OID format against ADP requirements"
+  ]
+}

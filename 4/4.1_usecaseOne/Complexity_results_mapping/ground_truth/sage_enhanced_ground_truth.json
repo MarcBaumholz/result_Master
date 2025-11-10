@@ -1,0 +1,122 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employee_id",
+      "ground_truth_path": "/leave-management/requests (formData.employee_id)",
+      "confidence": 0.95,
+      "notes": "Conversion to integer",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "target_field": "time_off_policy_id",
+      "ground_truth_path": "/leave-management/requests (formData.time_off_policy_id)",
+      "confidence": 0.9,
+      "notes": "Conversion to integer",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/leave-management/requests (response.status)",
+      "confidence": 0.85,
+      "notes": "Status available in response schema (Approved, etc.); not settable on create",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "date_from",
+      "ground_truth_path": "/leave-management/requests (formData.date_from)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "date_to",
+      "ground_truth_path": "/leave-management/requests (formData.date_to)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "part_of_day",
+      "ground_truth_path": "/leave-management/requests (formData.part_of_day)",
+      "confidence": 0.85,
+      "notes": "Conversion: true→first_part_of_day, false→all_day",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "target_field": "part_of_day",
+      "ground_truth_path": "/leave-management/requests (formData.part_of_day)",
+      "confidence": 0.85,
+      "notes": "Conversion: true→second_part_of_day, false→all_day",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "target_field": "hours",
+      "ground_truth_path": "/leave-management/requests (formData.hours)",
+      "confidence": 0.9,
+      "notes": "Conversion: map numeric amount to hours for partial day",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "derived",
+      "ground_truth_path": "/leave-management/requests (derived)",
+      "confidence": 0.85,
+      "notes": "Logical: hours provided → HOURS; all_day/multi-date → DAYS",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "details",
+      "ground_truth_path": "/leave-management/requests (formData.details)",
+      "confidence": 0.9,
+      "notes": "Direct mapping",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "unmappable_analysis": {},
+  "mapping_summary": {
+    "direct_mappings": 3,
+    "conversion_mappings": 6,
+    "logical_mappings": 1,
+    "unmappable_fields": 0,
+    "mapping_coverage": "100%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/leave-management/requests (POST - Create time off request)",
+      "/leave-management/requests (GET - List time off requests)",
+      "/leave-management/kit-days (GET - View KIT days)",
+      "/leave-management/kit-days (POST - Create KIT day)"
+    ],
+    "schemas_analyzed": [
+      "Time off request creation schema",
+      "Time off request response schema",
+      "KIT days schema"
+    ],
+    "hidden_fields_found": [
+      "status field (in response schema - Approved, etc.)",
+      "status_code field (approved, declined, etc.)",
+      "hours field (for partial day requests)",
+      "is_part_of_day field (boolean)",
+      "first_part_of_day/second_part_of_day fields (boolean)"
+    ],
+    "half_day_logic": "Use part_of_day enum with first_part_of_day/second_part_of_day values",
+    "status_logic": "Status available in response but not settable on create",
+    "unit_logic": "Derive from hours/part_of_day - hours provided → HOURS; all_day/multi-date → DAYS",
+    "amount_logic": "Use hours field for partial day requests"
+  },
+  "processing_context": "Sage HR API - uses time off policies and supports partial day requests with hours",
+  "enhancement_confidence": 0.95,
+  "total_fields_identified": 10
+}

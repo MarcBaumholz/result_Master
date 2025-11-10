@@ -1,0 +1,582 @@
+openapi: "3.0.0"
+info:
+  title: HRIS Absence Management API
+  contact:
+    name: Flip
+    url: 'https://www.getflip.com'
+  version: '4.0'
+  description: |-
+    HRIS Absence Management API which enables clients to manage the absences of the employees
+    with different external systems like Personio and SAP/HCM and many more
+servers: [ ]
+paths:
+  /api/hris/v4/absences:
+    get:
+      x-experimental: true
+      x-flip-internal: true
+      x-flip-api-name: hris
+      x-flip-resource-name: absences
+      x-flip-error-codes:
+        $ref: '#/components/schemas/GetAbsencesErrorCode'
+      summary: List absences
+      operationId: getAbsences
+      description: List absences which match the given criteria for defined employees
+      tags:
+        - absences
+      security:
+        - bearer:
+            - user
+            - admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Absences'
+      parameters:
+        - $ref: 'shared.yml#/components/parameters/Accept-Language-Header'
+        - $ref: 'shared.yml#/components/parameters/page_number' # DD-09
+        - $ref: 'shared.yml#/components/parameters/page_limit_100' # DD-09
+        - name: x-auth-email
+          in: header
+          description: Used for identifying the employee
+          schema:
+            $ref: 'users-common.yml#/components/schemas/EmailAddress'
+        - name: sort
+          in: query
+          schema:
+            type: array
+            maxItems: 1
+            items:
+              $ref: '#/components/schemas/AbsencesSortingOption'
+        - name: date_from
+          in: query
+          required: true
+          description: |-
+            Specifies the begin (inclusive) of the time range from which absences are queried.
+            Format: Date in YYYY-MM-DD format.
+            Time zone: To standardize time zone handling this parameter has to be in UTC.
+            Restriction: This parameter must not specify a date that is more than 2 years in the past from the current date. This ensures data relevance and optimizes performance by limiting the amount of historical data retrieved.
+            Example: If today's date is 2024-04-23, the earliest permissible value for date_from would be 2021-04-23.
+          schema:
+            type: string
+            format: date
+            example: 2024-04-23
+        - name: date_until
+          in: query
+          required: true
+          description: |-
+            Specifies the end (inclusive) of the time range from which absences are queried.
+            Format: Date in YYYY-MM-DD format.
+            Time zone: To standardize time zone handling this parameter has to be in UTC.
+            Restriction: The date must not be more than 2 years in the future from the current date to ensure data relevance and optimize performance.
+          schema:
+            type: string
+            format: date
+            example: 2026-04-23
+    post:
+      x-experimental: true
+      x-flip-internal: true
+      x-flip-api-name: hris
+      x-flip-resource-name: absences
+      x-flip-error-codes:
+        $ref: '#/components/schemas/CreateAbsencesErrorCode'
+      summary: Creates absence
+      operationId: createAbsence
+      description: Creates an absence during the defined duration with the chosen type of absence
+      tags:
+        - absences
+      security:
+        - bearer:
+            - user
+            - admin
+      parameters:
+        - $ref: 'shared.yml#/components/parameters/Accept-Language-Header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbsenceCreation'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Absence'
+  /api/hris/v4/absences/{id}:
+    delete:
+      x-experimental: true
+      x-flip-internal: true
+      x-flip-api-name: hris
+      x-flip-resource-name: absences
+      summary: Delete absence
+      description: Deletes a specific absence
+      operationId: deleteAbsence
+      tags:
+        - absences
+      security:
+        - bearer:
+          - user
+          - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeleteHrisAbsencesAbsenceIdSuccessfulResponse"
+  /api/hris/v4/absence-balances: # to be clarified: why not absence-balances?
+    get:
+      x-experimental: true
+      x-flip-internal: true
+      x-flip-api-name: hris
+      x-flip-resource-name: absences
+      summary: get balances for absences
+      description: get the balances for the absences
+      operationId: getAbsenceBalances
+      tags:
+        - absences
+      parameters:
+        - name: "cursor"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "page_size"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int64"
+            default: "100"
+        - name: "updated_after"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            format: "date-time"
+        - name: "include_deleted"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            enum:
+              - "TRUE"
+              - "FALSE"
+        - name: "ids"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "remote_ids"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GetHrisTimeOffBalancesSuccessfulResponse"
+  /api/hris/v4/absence-types:
+    get:
+      x-experimental: true
+      x-flip-internal: true
+      x-flip-api-name: hris
+      x-flip-resource-name: absences
+      summary: GET api/hris/absence-types
+      description: get the absence types
+      operationId: getAbsenceTypes
+      tags:
+        - absences
+      parameters:
+        - name: "cursor"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "page_size"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "int64"
+            default: "100"
+        - name: "updated_after"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            format: "date-time"
+        - name: "include_deleted"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+            enum:
+              - "TRUE"
+              - "FALSE"
+        - name: "ids"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "remote_ids"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GetHrisAbsenceTypesSuccessfulResponse"
+components:
+  schemas:
+    CreateAbsencesErrorCode:
+      type: string
+      enum:
+        - FEATURE_DISABLED
+
+    GetAbsencesErrorCode:
+      type: string
+      enum:
+        - FEATURE_DISABLED
+
+    AbsencesSortingOption:
+      type: string
+      enum:
+        - START_DATE_ASC
+        - START_DATE_DESC
+
+    Absence:
+      type: object
+      required:
+        - external_id
+        - start_date
+        - end_date
+        - start_half_day
+        - end_half_day
+        - status
+        - duration
+        - type
+        - created_at
+        - updated_at
+        - is_cancellable
+        - is_deletable
+      properties:
+        external_id:
+          $ref: 'shared.yml#/components/schemas/ExternalIdMandatory'
+        approver_external_id:
+          $ref: 'shared.yml#/components/schemas/ExternalId'
+#        requestor_id:
+           # the id of the "owner" or "requestor" of the absence (the employee)
+#          # currently kept out because we do not need it, and
+#          # to provide the Flip ID would be quite complex, because we would have to fetch it somehow.
+#          # must be a Flip UUID because the requestor has to be in Flip anyways, otherwise
+#          # the request would not work
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        start_half_day:
+          type: boolean
+        end_half_day:
+          type: boolean
+        start_time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$'
+          example: '13:45:22'
+        end_time:
+          type: string
+          pattern: '^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$'
+          example: '13:45:22'
+        duration:
+          type: object
+          description: defines the duration of the absence
+          required:
+            - amount
+            - unit
+          properties:
+            amount:
+              type: number
+              format: double
+            unit:
+              $ref: '#/components/schemas/AbsenceDurationUnit'
+        status:
+          $ref: '#/components/schemas/AbsenceStatus'
+        is_cancellable:
+          type: boolean
+        is_deletable:
+          type: boolean
+        requestor_comment:
+          type: string
+        type:
+          $ref: '#/components/schemas/AbsenceType'
+        created_at:
+          $ref: 'shared.yml#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: 'shared.yml#/components/schemas/UpdatedAt'
+
+    AbsenceStatus:
+      type: object
+      required:
+        - mapped
+        - raw
+      properties:
+        raw:
+          type: string
+          description: contains the value of the external system if it cannot be mapped because it is unknown.
+        mapped:
+          type: string
+          description: defines the type of the status.
+          enum:
+            - REQUESTED
+            - PENDING
+            - APPROVED
+            - DECLINED
+            - CANCELLED
+            - UNKNOWN
+
+    AbsenceType:
+      type: object
+      description: |-
+        Represents a type of absence with additional configuration
+        support which an employee can then consume.
+      required:
+        - external_id
+        - name
+        - unit
+        - half_days_supported
+        - exact_times_supported
+        - created_at
+        - updated_at
+      properties:
+        external_id:
+          $ref: 'shared.yml#/components/schemas/ExternalIdMandatory'
+        name: # TODO: should be a localized name, but for now we only use string
+          type: string
+        unit:
+          $ref: '#/components/schemas/AbsenceDurationUnit'
+        half_days_supported:
+          type: boolean
+          description: Whether the integration supports half-day absences (represented through `start_half_day` and `end_half_day`) for this type of absence.
+        exact_times_supported:
+          type: boolean
+          description: '`true` if the system supports time based absences (absences with a `start_time` and an `end_time`) for this type of absence, `false` if not.'
+
+    AbsenceDurationUnit:
+      type: string
+      enum:
+        - HOURS
+        - DAYS
+
+    Absences:
+      type: object
+      properties:
+        absences:
+          type: array
+          description: 'An array of all retrieved absences, according to the pagination and sort arguments'
+          items:
+            $ref: '#/components/schemas/Absence'
+        pagination:
+          $ref: 'shared.yml#/components/schemas/OffsetPagination'
+    AbsenceCreation:
+      type: object
+      properties:
+        employee_external_id:
+          $ref: 'shared.yml#/components/schemas/ExternalId'
+        absence_type_external_id:
+          $ref: 'shared.yml#/components/schemas/ExternalId'
+        status:
+          type: string
+          enum:
+            - REQUESTED
+            - APPROVED
+        start_date:
+          type: "string"
+          format: "date"
+        end_date:
+          type: "string"
+          format: "date"
+        start_half_day:
+          type: "boolean"
+        end_half_day:
+          type: "boolean"
+        amount:
+          type: "number"
+          format: "double"
+        unit:
+          type: "string"
+          enum:
+            - "DAYS"
+        employee_note:
+          type: "string"
+    PostHrisAbsencesSuccessfulResponseData:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        remote_id:
+          type: "string"
+        employee_id:
+          type: "string"
+        approver_id:
+          type: "string"
+        start_date:
+          type: "string"
+        end_date:
+          type: "string"
+        start_half_day:
+          type: "boolean"
+        end_half_day:
+          type: "boolean"
+        start_time:
+          type: "string"
+        end_time:
+          type: "string"
+        amount:
+          type: "number"
+          format: "double"
+        unit:
+          type: "string"
+          enum:
+            - "HOURS"
+            - "DAYS"
+        status:
+          type: "string"
+        employee_note:
+          type: "string"
+        type_id:
+          type: "string"
+        changed_at:
+          type: "string"
+          format: "date-time"
+        remote_deleted_at:
+          type: "string"
+          format: "date-time"
+        remote_data:
+          type: "string"
+    DeleteHrisAbsencesAbsenceIdSuccessfulResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum:
+            - "SUCCESS"
+        data:
+          $ref: "#/components/schemas/PostHrisAbsencesSuccessfulResponseData"
+    GetHrisAbsenceTypesSuccessfulResponseDataResultsInner:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        unit:
+          type: "string"
+          enum:
+            - "HOURS"
+            - "DAYS"
+        half_days_supported:
+          type: "boolean"
+        exact_times_supported:
+          type: "boolean"
+        remote_id:
+          type: "string"
+        remote_data:
+          type: "string"
+        changed_at:
+          type: "string"
+          format: "date-time"
+        remote_deleted_at:
+          type: "string"
+          format: "date-time"
+    GetHrisTimeOffBalancesSuccessfulResponseDataResultsInner:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        remote_id:
+          type: "string"
+        employee_id:
+          type: "string"
+        type_id:
+          type: "string"
+        balance:
+          type: "number"
+          format: "double"
+        balance_unit:
+          type: "string"
+          enum:
+            - "HOURS"
+            - "DAYS"
+        changed_at:
+          type: "string"
+          format: "date-time"
+        remote_deleted_at:
+          type: "string"
+          format: "date-time"
+        used:
+          type: "number"
+          format: "double"
+        used_unit:
+          type: "string"
+          enum:
+            - "HOURS"
+            - "DAYS"
+        remote_data:
+          type: "string"
+        type:
+          $ref: "#/components/schemas/GetHrisAbsenceTypesSuccessfulResponseDataResultsInner"
+    GetHrisTimeOffBalancesSuccessfulResponseData:
+      type: "object"
+      properties:
+        next:
+          type: "string"
+        results:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/GetHrisTimeOffBalancesSuccessfulResponseDataResultsInner"
+    GetHrisTimeOffBalancesSuccessfulResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum:
+            - "SUCCESS"
+        data:
+          $ref: "#/components/schemas/GetHrisTimeOffBalancesSuccessfulResponseData"
+    GetHrisAbsenceTypesSuccessfulResponseData:
+      type: "object"
+      properties:
+        next:
+          type: "string"
+        results:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/GetHrisAbsenceTypesSuccessfulResponseDataResultsInner"
+    GetHrisAbsenceTypesSuccessfulResponse:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+          enum:
+            - "SUCCESS"
+        data:
+          $ref: "#/components/schemas/GetHrisAbsenceTypesSuccessfulResponseData"

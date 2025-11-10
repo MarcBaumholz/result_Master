@@ -1,0 +1,114 @@
+{
+  "mapping_metadata": {
+    "source_system": "BambooHR",
+    "target_system": "Flip HRIS Shift Planning",
+    "mapping_version": "2.0",
+    "created_date": "2024-12-19",
+    "analysis_method": "Ground Truth Validation",
+    "confidence_score": 0.95,
+    "field_coverage": "8/17 fields mapped (based on actual API)",
+    "note": "BambooHR only supports time tracking, not shift planning"
+  },
+  "fields": {
+    "employee_id": {
+      "source_field": "employeeId",
+      "source_type": "integer",
+      "target_field": "employee_id",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.95,
+      "notes": "Convert integer employee ID to string"
+    },
+    "time_tracking_id": {
+      "source_field": "timeTrackingId",
+      "source_type": "string",
+      "target_field": "shift_id",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Use time tracking ID as shift identifier"
+    },
+    "date": {
+      "source_field": "date",
+      "source_type": "string",
+      "target_field": "date",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Date of time tracking entry"
+    },
+    "hours_worked": {
+      "source_field": "hoursWorked",
+      "source_type": "number",
+      "target_field": "hours_worked",
+      "target_type": "decimal",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Hours worked from time tracking"
+    },
+    "start_time": {
+      "source_field": "start",
+      "source_type": "string",
+      "target_field": "clock_in_time",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Map start time to clock_in_time"
+    },
+    "end_time": {
+      "source_field": "end",
+      "source_type": "string",
+      "target_field": "clock_out_time",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Map end time to clock_out_time"
+    },
+    "notes": {
+      "source_field": "note",
+      "source_type": "string",
+      "target_field": "notes",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.9,
+      "notes": "Time tracking notes"
+    },
+    "department": {
+      "source_field": "departmentId",
+      "source_type": "integer",
+      "target_field": "department",
+      "target_type": "string",
+      "mapping_type": "lookup",
+      "confidence": 0.85,
+      "notes": "Lookup department name from ID"
+    }
+  },
+  "mapped_fields": {
+    "bamboo": {
+      "employee_id": "employeeId",
+      "shift_id": "timeTrackingId",
+      "date": "date",
+      "hours_worked": "hoursWorked",
+      "clock_in_time": "start",
+      "clock_out_time": "end",
+      "notes": "note",
+      "department": "departmentId"
+    }
+  },
+  "unmapped_fields": {
+    "reason": "BambooHR API does not support shift planning - only time tracking",
+    "missing_fields": [
+      "break_start",
+      "break_end",
+      "overtime_hours",
+      "regular_hours",
+      "work_schedule_type",
+      "employment_type",
+      "start_date",
+      "end_date",
+      "active",
+      "status"
+    ],
+    "recommendation": "Use time tracking data as proxy for shift planning"
+  }
+}

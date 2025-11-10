@@ -1,0 +1,167 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /company/time-off-periods",
+    "reasoning": "Most relevant endpoint for creating time off periods in Personio",
+    "required_structure": "Simple flat structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "/company/time-off-periods (requestBody.employee_id)",
+      "notes": "Direct mapping - employee identifier as integer",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "time_off_type_id",
+      "ground_truth_path": "/company/time-off-periods (requestBody.time_off_type_id)",
+      "notes": "Direct mapping - absence type identifier as integer",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't accept status in request - likely determined by system after processing",
+      "mapping_type": "Unmappable"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "/company/time-off-periods (requestBody.start_date)",
+      "notes": "Direct mapping - start date field in YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/company/time-off-periods (requestBody.end_date)",
+      "notes": "Direct mapping - end date field in YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "half_day_start",
+      "ground_truth_path": "/company/time-off-periods (requestBody.half_day_start)",
+      "notes": "Direct mapping - boolean field for half day start",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "half_day_end",
+      "ground_truth_path": "/company/time-off-periods (requestBody.half_day_end)",
+      "notes": "Direct mapping - boolean field for half day end",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track amount in request - may be calculated from dates",
+      "mapping_type": "Unmappable"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track units in request - may be implicit in date calculations",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "comment",
+      "ground_truth_path": "/company/time-off-periods (requestBody.comment)",
+      "notes": "Employee note maps to comment field",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 7,
+    "unmappable_fields": 3,
+    "mapping_types": {
+      "Direct": 5,
+      "Conversion": 2,
+      "Unmappable": 3
+    },
+    "complexity_analysis": {
+      "simple_mappings": 5,
+      "conversion_mappings": 2,
+      "unmappable_fields": 3
+    },
+    "confidence_scores": {
+      "high_confidence": 7,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 3
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "employee_external_id",
+        "from_type": "string",
+        "to_type": "integer",
+        "conversion_method": "Convert string to integer for employee_id field"
+      },
+      {
+        "field": "absence_type_external_id",
+        "from_type": "string",
+        "to_type": "integer",
+        "conversion_method": "Convert string to integer for time_off_type_id field"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Convert employee_external_id from string to integer",
+      "Convert absence_type_external_id from string to integer"
+    ],
+    "missing_fields_handling": [
+      "status: Consider if handled by system or different endpoint",
+      "amount/unit: Calculate from start/end dates if needed"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "employee_id must be valid employee ID in system",
+      "time_off_type_id must be valid absence type ID in system",
+      "start_date and end_date must be in YYYY-MM-DD format"
+    ],
+    "business_logic_considerations": [
+      "API uses simple flat structure - easier to implement",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/company/time-off-periods",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["employee_id", "time_off_type_id", "start_date", "end_date"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 7,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

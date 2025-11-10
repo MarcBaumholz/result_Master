@@ -1,0 +1,152 @@
+{
+  "mapping_metadata": {
+    "source_system": "StackOne",
+    "target_system": "Flip HRIS Shift Planning",
+    "mapping_version": "2.0",
+    "created_date": "2024-12-19",
+    "analysis_method": "Ground Truth Validation",
+    "confidence_score": 0.88,
+    "field_coverage": "12/17 fields mapped (based on actual API)",
+    "note": "StackOne supports time entries and employment data"
+  },
+  "fields": {
+    "employee_id": {
+      "source_field": "employee_id",
+      "source_type": "string",
+      "target_field": "employee_id",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Employee identifier"
+    },
+    "time_entry_id": {
+      "source_field": "id",
+      "source_type": "string",
+      "target_field": "shift_id",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Use time entry ID as shift identifier"
+    },
+    "date": {
+      "source_field": "date",
+      "source_type": "string",
+      "target_field": "date",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Date of time entry"
+    },
+    "hours_worked": {
+      "source_field": "hours_worked",
+      "source_type": "number",
+      "target_field": "hours_worked",
+      "target_type": "decimal",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Hours worked from time entry"
+    },
+    "start_time": {
+      "source_field": "start_time",
+      "source_type": "string",
+      "target_field": "clock_in_time",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.9,
+      "notes": "Start time of work"
+    },
+    "end_time": {
+      "source_field": "end_time",
+      "source_type": "string",
+      "target_field": "clock_out_time",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.9,
+      "notes": "End time of work"
+    },
+    "status": {
+      "source_field": "status",
+      "source_type": "enum",
+      "target_field": "status",
+      "target_type": "enum",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Time entry status (approved, pending, etc.)"
+    },
+    "labor_type": {
+      "source_field": "labor_type",
+      "source_type": "string",
+      "target_field": "work_schedule_type",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.85,
+      "notes": "Map labor type to work schedule type"
+    },
+    "notes": {
+      "source_field": "notes",
+      "source_type": "string",
+      "target_field": "notes",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.9,
+      "notes": "Time entry notes"
+    },
+    "created_at": {
+      "source_field": "created_at",
+      "source_type": "string",
+      "target_field": "created_at",
+      "target_type": "datetime",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Creation timestamp"
+    },
+    "updated_at": {
+      "source_field": "updated_at",
+      "source_type": "string",
+      "target_field": "updated_at",
+      "target_type": "datetime",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Last update timestamp"
+    },
+    "employment_type": {
+      "source_field": "employment_type",
+      "source_type": "enum",
+      "target_field": "employment_type",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.85,
+      "notes": "Employment type from employee data"
+    }
+  },
+  "mapped_fields": {
+    "stackone": {
+      "employee_id": "employee_id",
+      "shift_id": "id",
+      "date": "date",
+      "hours_worked": "hours_worked",
+      "clock_in_time": "start_time",
+      "clock_out_time": "end_time",
+      "status": "status",
+      "work_schedule_type": "labor_type",
+      "notes": "notes",
+      "created_at": "created_at",
+      "updated_at": "updated_at",
+      "employment_type": "employment_type"
+    }
+  },
+  "unmapped_fields": {
+    "reason": "StackOne API supports time entries and employment data, not full shift planning",
+    "missing_fields": [
+      "break_start",
+      "break_end",
+      "overtime_hours",
+      "regular_hours",
+      "start_date",
+      "end_date",
+      "active",
+      "department"
+    ],
+    "recommendation": "Use time entry data as shift planning foundation, calculate missing fields"
+  }
+}

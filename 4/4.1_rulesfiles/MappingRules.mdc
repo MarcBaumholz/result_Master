@@ -1,0 +1,1516 @@
+---
+description: "UNIFIED API Integration Rules - Complete orchestration guide with 19 verified MCP tools, phase-gated execution, and cognitive-mind orchestration. Automates creation of API integrations between HR software systems through intelligent field mapping, semantic analysis, and Kotlin code generation."
+globs: 
+alwaysApply: false
+version: "2.0"
+lastUpdated: "December 2024"
+status: "✅ All 19 MCP tools verified and working"
+---
+# Rules for the API Integration Agent (with MCP tool Tempalte MCP)
+
+IMPORTANT: Always start by generating a Planning.mD file and a Tasks.md file based on this rules file before using the tools. Always use the information here as context and retain it in memory. Use all the detailed information here in the rules file to create the planning and task files. Planning is executed by the Cognitive‑Mind orchestrator (see `.cursor/rules/cognitivemind/`).
+
+**TASK TEMPLATE INTEGRATION:** Use `.cursor/rules/tasklist_template_tochange.md` as the base template for creating TASKS.md. Replace all placeholders with product-specific information and load tasks into the dynamic task management system.
+
+**PHASE 3 CODING RULES:** Always reference `.cursor/rules/phase3_coding_rules.mdc` during Phase 3 code generation to ensure Controller/Service/Mapper pattern, security annotations, logging, null safety, and TDD principles are properly implemented.
+
+## 📋 MD FILE WORKFLOW PROTOCOL
+
+**CRITICAL:** Two key tools now generate MD files with comprehensive prompts for external LLM usage:
+
+### 🎯 **get_direct_api_mapping_prompt** & **generate_kotlin_mapping_code**
+- **Output:** Saves comprehensive prompts as timestamped MD files
+- **Location:** Current working directory (or specified output_directory)
+- **Format:** `{tool_name}_prompt_YYYYMMDD_HHMMSS.md`
+
+### 🔄 **WORKFLOW AFTER TOOL EXECUTION:**
+1. **Tool generates MD file** with instructions and prompt content
+2. **LLM receives success message** with file path and next steps
+3. **LLM MUST:** Open the generated MD file
+4. **LLM MUST:** Copy the prompt content (after instructions header)
+5. **LLM MUST:** Apply the prompt to the system (ChatGPT, Claude, etc.)
+6. **LLM MUST:** Follow the structured process outlined in the prompt
+7. **LLM MUST:** Generate the expected output format
+
+### 📊 **EXPECTED BEHAVIOR:**
+- **Direct Mapping:** Generate comprehensive mapping analysis with endpoint selection, field mapping table, and recommendations
+- **Kotlin Generation:** Generate complete Kotlin code with Controller/Service/Mapper layers, security, logging, and null-safety
+
+**This workflow ensures proper separation of concerns and allows for external LLM processing of complex prompts.**
+
+## 📋 TASK TEMPLATE INTEGRATION PROTOCOL
+
+### MANDATORY TASK TEMPLATE LOADING:
+**Before creating TASKS.md, the orchestrator MUST:**
+
+1. **Load Task Template:**
+   - Read `.cursor/rules/tasklist_template_tochange.md`
+   - Identify all `[PLACEHOLDER]` values
+   - Replace with product-specific information
+
+2. **Customize Template:**
+   - Update `[PRODUCT_NAME]` with actual product name
+   - Replace `[SOURCE_API_NAME]` and `[TARGET_API_NAME]`
+   - Set appropriate priorities and categories
+   - Add product-specific validation steps
+
+3. **Load into Dynamic Task Management:**
+   - Use `mcp_connector_mcp_dynamic_task_management()` to load tasks
+   - Set appropriate priorities (high/medium/low)
+   - Validate task sequence and dependencies
+
+4. **Reference in Workflow:**
+   - Use loaded tasks as base for TASKS.md
+   - Update task status as workflow progresses
+   - Generate progress reports from task management system
+
+## ⚙️ PHASE 3 CODING RULES INTEGRATION PROTOCOL
+
+### MANDATORY PHASE 3 RULES APPLICATION:
+**During Phase 3 code generation, the orchestrator MUST:**
+
+1. **Load Phase 3 Rules:**
+   - Read `.cursor/rules/phase3_coding_rules.mdc`
+   - Understand Controller/Service/Mapper pattern requirements
+   - Review security, logging, and null safety standards
+
+2. **Apply Rules to Code Generation:**
+   - Use `generate_kotlin_mapping_code()` with rules reference
+   - Ensure Controller/Service/Mapper architecture
+   - Implement `@Secured` security annotations
+   - Add SLF4J logging throughout
+   - Apply null safety and error handling
+
+3. **Validate Against Rules:**
+   - Check generated code follows Phase 3 patterns
+   - Verify security annotations are present
+   - Validate logging implementation
+   - Ensure TDD principles are followed
+
+4. **Quality Suite with Rules:**
+   - Use `phase3_quality_suite()` to validate code quality
+   - Check against Phase 3 coding standards
+   - Fix any violations found
+   - Ensure production-ready code
+
+## 🧠 ORCHESTRATOR DECISION-MAKING PROTOCOL
+
+### MANDATORY FIRST STEP: Overall Analysis & Planning
+**Before ANY tool execution, the orchestrator MUST:**
+
+1. **Comprehensive Analysis Phase:**
+   - Analyze user requirements and context
+   - Identify source and target systems
+   - Assess complexity and scope
+   - Determine optimal strategy (direct, RAG-based, or hybrid)
+
+2. **Create Detailed Planning Documents:**
+   - `PLANNING.md` - Strategic overview with BDI analysis
+   - `TASKS.md` - Granular task breakdown with decision points
+   - `STATUS.md` - Current system state tracking
+
+3. **Decision Framework Setup:**
+   - Establish phase gates and success criteria
+   - Define decision points for tool selection
+   - Create feedback loops for course correction
+
+### STEP-BY-STEP ORCHESTRATION PROTOCOL
+
+**After Each Step, the Orchestrator MUST:**
+
+1. **🔍 ASSESS CURRENT STATE:**
+   - What phase are we in? (0-4)
+   - What artifacts have been generated?
+   - What tools have been successfully executed?
+   - What are the current outputs and their quality?
+
+2. **📊 EVALUATE PROGRESS:**
+   - Are phase gate criteria met?
+   - Do we have sufficient information to proceed?
+   - Are there any errors or missing components?
+   - Is the current approach working effectively?
+
+3. **🎯 DECIDE NEXT ACTION:**
+   - Which MCP tool is most appropriate for the next step?
+   - Do we need to gather more information first?
+   - Should we proceed to the next phase or iterate?
+   - Are there any prerequisites that need to be fulfilled?
+
+4. **📝 UPDATE DOCUMENTATION:**
+   - Update `TASKS.md` with completed items ✅
+   - Log progress in `STATUS.md`
+   - Record decisions and rationale
+   - Note any course corrections or adaptations
+
+### DECISION TREE FOR ORCHESTRATOR
+
+```markdown
+## Orchestrator Decision Framework
+
+### Phase 0 Decision Points:
+- ✅ Environment bootstrapped? → Proceed to Phase 1
+- ❌ Bootstrap failed? → Diagnose and retry
+- ⚠️ Partial success? → Complete missing components
+
+### Phase 1 Decision Points:
+- ✅ Files accessible via read_multiple_files? → Proceed to upload
+- ❌ File access failed? → Check paths and permissions
+- ✅ Upload successful? → Proceed to analysis
+- ❌ Upload failed? → Check RAG connectivity
+
+### Phase 2 Decision Points:
+- ✅ Start with analyze_json_fields_with_rag → Extract ALL source fields (including nested arrays)
+- ✅ Verify field extraction completeness → Ensure no relevant fields missed
+- ✅ Use query_api_specification → Query target API with field context
+- ✅ Run enhanced_rag_analysis → Deep semantic analysis
+- ✅ Run get_direct_api_mapping_prompt → Direct mapping comparison
+- ✅ Compare all three results → Triangulation analysis
+- ✅ Run reasoning_agent → Final orchestration and validation
+- ✅ Present for human approval → Display top 3 matches with verification
+- ❌ Human approval denied? → Iterate with different strategy
+
+### Phase 3 Decision Points:
+- ✅ Mapping approved? → Use phase3_generate_mapper
+- ✅ Code generated? → Use phase3_quality_suite
+- ✅ Quality issues found? → Use phase3_select_best_candidate
+- ✅ All tests pass? → Proceed to Phase 4
+- ❌ Tests fail? → Iterate code generation
+
+### Phase 4 Decision Points:
+- ✅ All phases verified? → Persist learnings
+- ❌ Verification incomplete? → Return to failed phase
+```
+
+## 1. 🎯 Overall Goal
+
+**Mission:** Automate API integrations between HR software systems using intelligent field mapping, semantic analysis, and Kotlin code generation.
+
+**Challenge:** Manual integration of thousands of HR systems is slow, expensive, and error-prone due to different API specifications, data models, and authentication methods.
+
+**Solution:** Cognitive agent system using BDI (Belief-Desire-Intention) model with specialized MCP tools for focused, step-by-step integration.
+
+**CRITICAL REQUIREMENT:** The system MUST extract ALL relevant fields from JSON structures, including:
+- Fields from data arrays (e.g., `data[].id`, `data[].employeeId`, `data[].type`, `data[].status`)
+- Nested object fields (e.g., `duration.value`, `duration.unit`)
+- Pagination/metadata fields (e.g., `pagination.page`, `pagination.pageSize`, `pagination.total`)
+- Any other nested structures that could be relevant for API mapping
+
+## 1.1 📚 CURRENT WORKING MCP TOOLS (20 Tools - ✅ All Verified)
+
+### Phase 1 - Data Extraction & RAG (6 tools)
+1. `test_rag_system()` - Test RAG system connectivity
+2. `list_available_api_specs()` - List API specification collections  
+3. `upload_api_specification(openapi_file_path, collection_name, metadata)` - Upload OpenAPI specs
+4. `query_api_specification(query, collection_name, limit, score_threshold)` - Semantic search
+5. `delete_api_specification(collection_name)` - Delete collections
+6. `upload_learnings_document(file_path, collection_name, metadata)` - Upload learning docs
+
+### Phase 2 - Analysis & Mapping (4 tools)
+7. `enhanced_rag_analysis(fields_to_analyze, collection_name, context_topic)` - Enhanced semantic analysis
+8. `reasoning_agent(source_analysis_path, api_spec_path, output_directory)` - Complete orchestration
+9. `iterative_mapping_with_feedback(source_fields, target_collection, api_spec_path)` - ReAct pattern mapping
+10. `analyze_json_fields_with_rag(webhook_json_path, current_directory, collection_name)` - Combined analysis
+
+### Phase 3 - Code Generation (4 tools) ⭐ CONSOLIDATED & OPTIMIZED + CODING RULES
+11. `generate_kotlin_mapping_code(mapping_report_path)` - Generate mapping prompts + Phase 3 rules
+12. `phase3_generate_mapper(mapping_report_path, output_directory)` - **END-TO-END KOTLIN GENERATOR** + Controller/Service/Mapper pattern
+13. `phase3_quality_suite(kotlin_file_path, mapping_report_path)` - **CODE AUDIT + TDD TESTS** + Phase 3 standards
+14. `phase3_select_best_candidate(kotlin_files, mapping_report_path)` - **CONSISTENCY SELECTOR** + Rules compliance
+
+### Phase 4 - TDD Validation (1 tool) ⭐ NEW
+15. `phase4_tdd_validation(kotlin_file_path, mapping_report_path)` - **TDD VALIDATION WITH CURSOR LLM**
+
+### Shared Utilities (5 tools)
+16. `copy_rules_to_working_directory(target_directory)` - Bootstrap environment
+17. `get_rules_source_info()` - View rules structure
+18. `get_direct_api_mapping_prompt(api_spec_path, analysis_md_path)` - Direct analysis
+19. `persist_phase_learnings(phase2_report_path, verification_file_path, phase3_report_path, phase3_verified)` - Long-term memory
+20. `analyze_fields_with_rag_and_llm()` - Alternative field analysis (commented out)
+
+## 2. 📝 Core Problem & Context
+
+- **The Challenge:** Manually integrating thousands of HR systems is slow, expensive, and error-prone due to different API specifications (OpenAPI, REST, etc.), data models, and authentication methods.
+- **The Approach:** We use a cognitive agent system inspired by the BDI (Belief-Desire-Intention) model. The agent breaks down the complex integration task into a series of smaller, manageable steps, using specialized MCP tools. This approach addresses the limitations of LLMs, such as hallucinations and context window size, by providing focused, relevant information at each stage.
+
+## 3. 🧠 Cognitive-Mind Orchestration (Integrated)
+
+This MappingRules file is self-contained and invokes the Cognitive-Mind orchestration automatically. The Queen Agent, specs, and workflow live under `.cursor/rules/cognitivemind/`. The plan is:
+- Load `.cursor/rules/cognitivemind/masterprompt.md` and follow its system files
+- Execute the workflow defined in `3_workflow-definition.yaml` (with Preflight, Planning, Clarification, Mapping, Review, CodeGen, Validation, Finalization)
+- Persist memory entries to `memory.log.md` per `5_memory-protocol.md`
+
+### 3.1 Planning with Cognitive‑Mind (Deep, Deliberate Thinking)
+
+Before any mapping or code generation:
+- Use the Cognitive‑Mind PlanningAgent to produce `plan.md` with a BDI section:
+  - Beliefs: concise model of source/target APIs and Flip domain context
+  - Desires: explicit mapping/connector goals and constraints
+  - Intentions: ordered sub‑tasks (checkboxes) that the Queen will execute
+- Perform deliberate reasoning (no tool calls except Preflight) to outline three alternative search strategies (ToT) for Phase 2 (e.g., exact path/param, semantic description, parameter‑description similarity). Record them in `plan.md`.
+- Add a short ToM note in `plan.md` capturing the likely developer intent for the target APIs to guide endpoint scoping (create/submit vs list).
+- Generate a concise `guidelines_digest.md` by summarizing the most relevant items from local learnings (`.cursor/rules/learninigs/ENDPOINT_VALIDATION_GUIDE.md`, `IMPROVED_MAPPING_PROTOCOL.md`, `LEARNINGS_AND_TODOS.md`, `structure.md`) and attach its absolute path to the state. This digest must be referenced by MappingAgent and ReviewAgent.
+- Create/refresh a dedicated learnings RAG collection `cognitive_learnings`:
+  - Ingest the same curated docs with `upload_learnings_document` (add metadata like phase/topics/version)
+  - During Planning, query `cognitive_learnings` for: `planning`, `BDI`, `ToM`, `ToT`, `efficiency` to enrich Beliefs/Desires/Intentions.
+- Only proceed once `plan.md` is acknowledged by the human or the Queen’s gating policy.
+
+### 3.2 Efficiency Boundaries (Follow Strictly)
+
+- Retrieval: prefer hybrid BM25 + dense embeddings; limit `top_k` to a small N (e.g., 10) and re‑rank by (endpoint name, description, parameter description similarities).
+- Tool minimization: avoid repeated identical queries; deduplicate; use local grep for exact path/method matches before expensive semantic search.
+- Token/time budgets: capture tokens and runtime per task; if thresholds exceeded, revise strategy (narrow query scope, reduce `top_k`).
+- Phase gates: do not enter Phase 3 until human approval is recorded after Review (Phase 2); do not save artifacts if tests fail.
+- Observability: log Confidence, RationaleBrief, ActionsTrace into `memory.log.md` per step.
+
+Important: All file paths must be absolute. MappingRules will pass these into the Cognitive-Mind GlobalWorkflowState as defined in `4_state-object-schema.md`.
+
+## 3.3 📋 TASK PLANNING GUIDANCE
+
+### MANDATORY FIRST STEPS:
+1. **Create `PLANNING.md`** - Strategic overview with BDI model
+2. **Create `TASKS.md`** - Detailed task breakdown with checkboxes
+3. **Verify environment** - Run `test_rag_system()` before starting
+
+### Planning Template Structure:
+```markdown
+# API Integration Planning
+
+## BDI Analysis
+- **Beliefs:** Source/target API understanding, domain context
+- **Desires:** Integration goals, success criteria
+- **Intentions:** Ordered tasks with phase gates
+
+## Task Strategy (ToT - Tree of Thoughts)
+1. Strategy A: Direct endpoint matching
+2. Strategy B: Semantic field analysis  
+3. Strategy C: Hybrid approach with verification
+
+## Resource Requirements
+- Source data files
+- Target API specifications
+- Expected deliverables
+```
+
+### Creating TASKS.md Template:
+```markdown
+# API Integration Tasks - Detailed Orchestration Checklist
+
+## 📊 CURRENT STATUS
+- **Current Phase:** [0/1/2/3/4]
+- **Last Completed Step:** [Description]
+- **Next Decision Point:** [What needs to be evaluated]
+- **Artifacts Generated:** [List files created]
+
+## Phase 0 - Bootstrap ☐
+- [ ] **0.1** Copy rules to working directory
+  - **Tool:** `copy_rules_to_working_directory`
+  - **Success Criteria:** All rule files present
+  - **Next Decision:** Check RAG connectivity
+- [ ] **0.2** Test RAG connectivity  
+  - **Tool:** `test_rag_system`
+  - **Success Criteria:** RAG system responds
+  - **Next Decision:** Verify API file accessibility
+- [ ] **0.3** Verify API file accessibility
+  - **Tool:** `read_multiple_files`
+  - **Success Criteria:** All API specs readable
+  - **Next Decision:** Proceed to Phase 1
+- [ ] **0.4** Create comprehensive planning documents
+  - **Files:** PLANNING.md, TASKS.md, STATUS.md
+  - **Success Criteria:** All documents created
+  - **Next Decision:** Begin Phase 1
+
+## Phase 1 - Context Setup ☐
+- [ ] **1.1** Upload source API specification
+  - **Tool:** `upload_api_specification` (after file verification)
+  - **Success Criteria:** Collection created successfully
+  - **Next Decision:** Upload target API or proceed to analysis
+- [ ] **1.2** Upload target API specification  
+  - **Tool:** `upload_api_specification`
+  - **Success Criteria:** Collection created successfully
+  - **Next Decision:** Verify collections exist
+- [ ] **1.3** Analyze JSON webhook data
+  - **Tool:** `analyze_json_fields_with_rag`
+  - **Success Criteria:** Field analysis generated
+  - **Next Decision:** Check analysis quality
+- [ ] **1.4** Verify collections created
+  - **Tool:** `list_available_api_specs`
+  - **Success Criteria:** All collections visible
+  - **Next Decision:** Proceed to Phase 2
+
+## Phase 2 - Mapping Analysis ☐
+- [ ] **2.1** Start with comprehensive JSON field analysis
+  - **Tool:** `analyze_json_fields_with_rag`
+  - **Purpose:** Extract and analyze ALL relevant fields from source JSON (including nested arrays, objects, and pagination)
+  - **Success Criteria:** Complete field analysis report generated with semantic context for ALL fields
+  - **Validation:** Verify that fields from data arrays, nested objects, and metadata are all captured
+  - **Next Decision:** Proceed to API specification querying
+- [ ] **2.2** Query API specification with RAG
+  - **Tool:** `query_api_specification` (multiple targeted queries)
+  - **Purpose:** Use field analysis results to query target API spec semantically
+  - **Success Criteria:** Relevant API endpoints and fields identified
+  - **Next Decision:** Run enhanced RAG analysis
+- [ ] **2.3** Enhanced RAG analysis
+  - **Tool:** `enhanced_rag_analysis`
+  - **Purpose:** Deep semantic analysis of field mappings with context
+  - **Success Criteria:** Enhanced mapping analysis with confidence scores
+  - **Next Decision:** Compare with direct mapping analysis
+- [ ] **2.4** Direct API mapping prompt analysis
+  - **Tool:** `get_direct_api_mapping_prompt`
+  - **Purpose:** Generate direct mapping analysis for comparison
+  - **Success Criteria:** Direct mapping results generated
+  - **Next Decision:** Compare all three analysis results
+- [ ] **2.5** Triangulation and comparison
+  - **Action:** Compare results from RAG queries, enhanced analysis, and direct mapping
+  - **Purpose:** Identify consensus vs. mismatches across all methods
+  - **Success Criteria:** Clear mapping decisions with rationale
+  - **Next Decision:** Run reasoning agent orchestration
+- [ ] **2.6** Reasoning agent comprehensive orchestration
+  - **Tool:** `reasoning_agent`
+  - **Purpose:** Final orchestration and validation of all mapping results
+  - **Success Criteria:** Comprehensive mapping report with verification
+  - **Next Decision:** Present for human approval
+- [ ] **2.7** Human approval checkpoint
+  - **Action:** Present complete mapping report to human for review
+  - **Requirements:** Display top 3 matches with full paths, verification summary
+  - **Success Criteria:** Explicit human approval received
+  - **Next Decision:** Proceed to Phase 3 only after approval
+
+## Phase 3 - Code Generation ☐ + Phase 3 Coding Rules Integration
+- [ ] **3.0** Load Phase 3 Coding Rules
+  - **Action:** Read `.cursor/rules/phase3_coding_rules.mdc`
+  - **Success Criteria:** Rules loaded and understood
+  - **Next Decision:** Apply rules to code generation
+- [ ] **3.1** Generate Kotlin mapper code with rules
+  - **Tool:** `phase3_generate_mapper` + Phase 3 rules reference
+  - **Success Criteria:** Complete Kotlin code with Controller/Service/Mapper pattern
+  - **Next Decision:** Run quality audit
+- [ ] **3.2** Run quality audit and TDD tests with rules
+  - **Tool:** `phase3_quality_suite` + Phase 3 standards
+  - **Success Criteria:** Code audit passed, tests generated, rules compliance verified
+  - **Next Decision:** Evaluate test results
+- [ ] **3.3** Validate test results and rules compliance
+  - **Action:** Review test outcomes, quality scores, and Phase 3 compliance
+  - **Success Criteria:** All tests pass, quality threshold met
+  - **Next Decision:** Select best candidate or proceed
+- [ ] **3.4** Select best code candidate (if multiple versions)
+  - **Tool:** `phase3_select_best_candidate`
+  - **Success Criteria:** Best version identified
+  - **Next Decision:** Proceed to Phase 4
+
+## Phase 4 - TDD Validation & Finalization ☐
+- [ ] **4.1** Run TDD validation with Cursor LLM integration
+  - **Tool:** `phase4_tdd_validation`
+  - **Success Criteria:** Comprehensive TDD prompts generated for Cursor LLM
+  - **Next Decision:** Execute TDD prompts in Cursor LLM
+- [ ] **4.2** Execute TDD prompts in Cursor LLM
+  - **Action:** Follow structured TDD prompts to create and run tests
+  - **Success Criteria:** All TDD tests pass, comprehensive test coverage achieved
+  - **Next Decision:** Verify all phase gates passed
+- [ ] **4.3** Verify all phase gates passed
+  - **Action:** Review all phase completion criteria including TDD validation
+  - **Success Criteria:** All phases verified successful including TDD tests
+  - **Next Decision:** Persist learnings or return to failed phase
+- [ ] **4.4** Persist learnings to long-term memory
+  - **Tool:** `persist_phase_learnings`
+  - **Success Criteria:** Learnings saved to RAG including TDD patterns
+  - **Next Decision:** Package deliverables
+- [ ] **4.5** Package final deliverables
+  - **Action:** Collect all generated artifacts including TDD test suite
+  - **Success Criteria:** Complete integration package with tests ready
+  - **Next Decision:** Update documentation
+- [ ] **4.6** Update documentation
+  - **Action:** Finalize all documentation including TDD process
+  - **Success Criteria:** Documentation complete and accurate
+  - **Next Decision:** Workflow complete
+
+## 🔄 ORCHESTRATOR CHECKPOINTS
+**After each task, the orchestrator MUST:**
+1. Update this checklist with ✅ for completed items
+2. Assess current state and next decision point
+3. Update STATUS.md with current progress
+4. Determine appropriate next action based on decision tree
+5. Log any issues or course corrections needed
+```
+
+### Creating STATUS.md Template:
+```markdown
+# API Integration Status - Live Orchestration Dashboard
+
+## 🎯 PROJECT OVERVIEW
+- **Project:** [Integration Name]
+- **Source System:** [System Name]
+- **Target System:** [System Name]  
+- **Started:** [Timestamp]
+- **Last Updated:** [Timestamp]
+
+## 📊 CURRENT STATE
+- **Active Phase:** Phase [0/1/2/3/4] - [Phase Name]
+- **Current Step:** [Step Number and Description]
+- **Progress:** [X/Y] tasks completed
+- **Overall Status:** [On Track/Blocked/Needs Attention]
+
+## 🔄 PHASE PROGRESS
+### Phase 0 - Bootstrap: [✅/⏳/❌]
+- Environment Setup: [Status]
+- RAG Connectivity: [Status]
+- File Verification: [Status]
+- Planning Documents: [Status]
+
+### Phase 1 - Context Setup: [✅/⏳/❌]
+- API Upload Status: [Status]
+- Collections Created: [Status]
+- Field Analysis: [Status]
+- Data Quality: [Status]
+
+### Phase 2 - Mapping Analysis: [✅/⏳/❌]
+- Strategy Selected: [Strategy Name]
+- Mapping Quality: [Score/Status]
+- Human Approval: [Pending/Approved/Rejected]
+- Verification: [Status]
+
+### Phase 3 - Code Generation: [✅/⏳/❌]
+- Code Generated: [Status]
+- Quality Audit: [Score/Status]
+- Tests Status: [Pass/Fail Count]
+- Final Selection: [Status]
+
+### Phase 4 - TDD Validation & Finalization: [✅/⏳/❌]
+- TDD Validation: [Status]
+- Cursor LLM Execution: [Status]
+- Test Coverage: [Percentage/Status]
+- Learning Persistence: [Status]
+- Deliverables: [Status]
+- Documentation: [Status]
+
+## 🛠️ TOOLS EXECUTED
+| Step | Tool | Status | Output | Next Decision |
+|------|------|--------|---------|---------------|
+| 0.1  | copy_rules_to_working_directory | ✅ | Rules copied | Check RAG |
+| 0.2  | test_rag_system | ⏳ | - | Pending |
+
+## 🚨 ISSUES & DECISIONS
+### Current Blockers:
+- [List any current issues]
+
+### Recent Decisions:
+- [Log key decisions made]
+
+### Next Decision Point:
+- **What:** [What needs to be decided]
+- **Options:** [Available options]
+- **Criteria:** [Decision criteria]
+- **Timeline:** [When decision needed]
+
+## 📁 ARTIFACTS GENERATED
+- [ ] PLANNING.md
+- [ ] TASKS.md  
+- [ ] STATUS.md
+- [ ] Field Analysis: [filename]
+- [ ] Mapping Report: [filename]
+- [ ] Kotlin Code: [filename]
+- [ ] Test Suite: [filename]
+- [ ] Final Package: [filename]
+
+## 🔍 QUALITY METRICS
+- **Mapping Accuracy:** [%]
+- **Field Coverage:** [X/Y fields]
+- **Test Coverage:** [%]
+- **Code Quality Score:** [Score]
+- **Human Approval:** [Yes/No/Pending]
+
+## 📝 ORCHESTRATOR NOTES
+- **Last Assessment:** [Timestamp and findings]
+- **Strategy Effectiveness:** [Assessment]
+- **Course Corrections:** [Any changes made]
+- **Lessons Learned:** [Key insights]
+```
+
+### Decision Matrix for Tool Selection:
+
+| Scenario | Primary Tool | Alternative | Notes |
+|----------|-------------|-------------|-------|
+| Small API spec (<50KB) | `get_direct_api_mapping_prompt` | `enhanced_rag_analysis` | Direct analysis faster |
+| Large API spec (>50KB) | `enhanced_rag_analysis` | `query_api_specification` | RAG handles complexity |
+| Multiple endpoints unclear | `reasoning_agent` | Manual triangulation | Full orchestration |
+| Simple field mapping | `phase3_generate_mapper` | `generate_kotlin_mapping_code` | End-to-end preferred |
+| Code quality critical | `phase3_quality_suite` | Manual review | Automated audit + TDD |
+
+#### PHASE 0: Cognitive-Mind Bootstrapping
+- **Step 0.1: Environment Bootstrap** (NEW)
+  - Invoke command `bootstrapEnvironment` from `cognitivemind_rules.mdc` to copy all rules to current directory
+  - This ensures all Cognitive-Mind orchestration files are available locally
+  - Use MCP tool `copy_rules_to_working_directory` to bootstrap the development environment
+- **Step 0.2: Workflow Initialization**
+  - Invoke command `runIntegrationWorkflow` from `cognitivemind_rules.mdc`
+  - Provide initial inputs: `user_task_description`, `source_json_path`, `source_spec_path`, `target_spec_path`, `source_collection_name`, `target_collection_name`, `output_directory`
+  - PreflightAgent will verify venv/.env and RAG health
+
+#### PHASE 1: Gathering Information about the Data
+
+### Step 1: Building the Knowledge Base
+- **High-Level Action:** Upload API specifications with the full absolute path and store them in a searchable RAG knowledge base
+- **Output:** A RAG-enabled knowledge base with structured API information
+
+**🚨 CRITICAL: Correct Tool Usage to Prevent Import Errors**
+
+**❌ WRONG - This causes import errors:**
+```json
+{
+  "tool": "upload_api_specification",
+  "arguments": {
+    "openapi_file_path": "/path/to/single/file.json",
+    "collection_name": "collection_name"
+  }
+}
+```
+
+**✅ CORRECT - Use this format:**
+```json
+{
+  "tool": "read_multiple_files", 
+  "arguments": {
+    "paths": [
+      "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/flip/hris-absence-management.yml",
+      "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/stackone/api_stackone.json"
+    ]
+  }
+}
+```
+
+**MCP Tools Used (from Cognitive-Mind):**
+- `read_multiple_files`: PRIMARY tool for reading OpenAPI specification files (.json or .yml) with full absolute file paths
+- `upload_api_specification`: Secondary upload tool (use only after successful file reading)
+- `list_available_api_specs`: Checks existing knowledge bases to avoid duplicates
+- `delete_api_specification`: Removes outdated API specifications before uploading new versions
+
+**Step 1 Execution Order:**
+1. **First:** Use `read_multiple_files` to verify file accessibility
+2. **Then:** Use `upload_api_specification` with verified paths
+3. **Verify:** Use `list_available_api_specs` to confirm upload success
+
+### Step 2: Phase 2 Complete Workflow - Multi-Strategy Analysis
+
+  **MANDATORY SEQUENCE:**
+  1. analyze_json_fields_with_rag → Extract and analyze ALL source JSON fields (CRITICAL: Must capture all nested fields)
+  2. query_api_specification → Query target API with comprehensive field context  
+  3. enhanced_rag_analysis → Deep semantic analysis
+  4. get_direct_api_mapping_prompt → Direct mapping comparison
+  5. Triangulation comparison → Compare all three results
+  6. reasoning_agent → Final orchestration and validation
+  7. Human approval checkpoint → Present results for approval
+
+  **FIELD EXTRACTION VALIDATION CHECKPOINT:**
+  After step 1, verify that ALL relevant fields were extracted:
+  - ✅ Data array fields (e.g., id, employeeId, type, status, startDate, endDate, duration, createdAt, updatedAt)
+  - ✅ Nested object fields (e.g., duration.value, duration.unit)
+  - ✅ Pagination fields (e.g., page, pageSize, total)
+  - ✅ Any other nested structures
+  If fields are missing, the analysis will be incomplete and mapping will fail.
+
+  **What each step does:**
+  - **analyze_json_fields_with_rag**: Extracts ALL relevant fields from source JSON (including nested arrays, objects, pagination) with semantic context
+  - **query_api_specification**: Uses comprehensive field analysis to query target API specification semantically
+  - **enhanced_rag_analysis**: Performs deep semantic analysis of field mappings with confidence scores
+  - **get_direct_api_mapping_prompt**: Generates direct mapping analysis for comparison
+  - **Triangulation**: Compares results from all three methods to identify consensus vs. mismatches
+  - **reasoning_agent**: Final orchestration and validation of all mapping results
+  - **Human approval**: Presents complete mapping report with top 3 matches and verification summary
+
+  **MCP tools used in sequence:**
+  analyze_json_fields_with_rag → query_api_specification → enhanced_rag_analysis → get_direct_api_mapping_prompt → reasoning_agent
+
+  **Tool usage example:**
+  analyze_json_fields_with_rag(
+    webhook_json_path="/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/neo4jrag/clean.json",
+    current_directory="/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/neo4jrag",
+    collection_name="flip_api_v2"
+  )
+
+  What the tool does:
+  JSON field extraction: Systematic identification of all relevant fields
+  Semantic analysis: LLM-based description of each field
+  Synonym generation: Alternative names for better mapping
+  Data type detection: Possible data types for each field
+  Business context: Classification within the business context
+  Structured output: JSON + Markdown reports
+
+  Output files:
+  clean_enhanced_analysis_YYYYMMDD_HHMMSS.json - Structured data
+  clean_enhanced_analysis_YYYYMMDD_HHMMSS.md - Readable report
+
+Status: We now have an analysis of the existing endpoints and relevant fields.
+
+#### PHASE 2: API Matching (Endpoint Scoping + Field Mapping)
+
+### Step 3: Semantic Field Search and Mapping (Advanced) [Cognitive-Mind Integration]
+- **High-Level Action:** Intensive search for the best matches for each source field using multiple query strategies and advanced context analysis.
+- Mapping the 3rd-party openAPI spec to find all relevant fields, step by step.
+
+Do not query the flip API, query the other API spec.
+- **Output:** Detailed mapping suggestions with confidence values and comprehensive justifications. The results of both tools are displayed at the end. Finally, write the results into a mappings.md file with the top 3 matches found per field, along with the confidence score.
+
+
+For Step 4 you must use all 3 methods in triangulation: `query_api_specification`, `get_direct_api_mapping_prompt` (now optimized with structured reasoning), and `enhanced_rag_analysis`.
+
+ **MCP tools used:**
+
+**4.1 Intensive Query Strategy:**
+- `query_api_specification` (from Cognitive-Mind tools):
+First, the 3rd-party API specification is queried using the high-level concept, so that all parameters of the most suitable endpoint are indexed, which initially leads to the mapping.
+
+Afterward, queries are systematically executed using various query combinations:
+- Exact field name search
+- Semantic similarity search
+- Context-based search using information from step 3
+- Synonym and variant search
+- Data type-specific search
+- Search based on the description
+
+- 'enhanced_rag_analysis' (from Cognitive-Mind tools):
+Also use this RAG tool to generate better retrieval. 
+
+   ### 4.0 Endpoint Scoping BEFORE Field Queries
+1. **First** perform an endpoint inventory:
+• Search the API spec (RAG + Grep) for path parts
+"timeOff", "absence", "leave", "request", "submit".
+• Filter: only endpoints with HTTP method == POST / PUT / PATCH
+(creation or submit).
+• Return a short list (path, method, summary)
+and select the most suitable create/submit endpoint
+as PRIMARY_ENDPOINT.
+2. Then use PRIMARY_ENDPOINT for all detail queries
+(parameters, body schema, field search).
+→ This prevents GET list endpoints from being incorrectly mapped.
+
+### 4.x Query Strategies
+– Include at least one **method filter** in every RAG query,
+e.g., "POST time off", "POST /timeOffEntries".
+– Additionally, use regex grep (exact text) against the spec file,
+e.g., `\"/timeOff.*\": \\{\\s+\"post\"`.
+- **Execution:** For each source field, at least 5-10 different query variants are executed to ensure all possible matches are found. Once you have found an endpoint, run query_api_specification and a grep sarch in parallel, grep_search on the JSON/YAML file (exact text) 
+
+  EXAMPLE:
+⚙️ Endpoint Discovery (MANDATORY)
+1. Run in parallel:
+• query_api_specification(query="POST time off OR submit absence", limit=10)
+• grep_search("\"\s*/[^\"}]*timeOff[^\"]*\"\\s*:\\s*\\{\\s*\"post\"", common_v1_*.json)
+2. Select the best POST endpoint; abort if none found.
+3. Only after PRIMARY_ENDPOINT is fixed, proceed with field mapping.
+
+**4.2 Advanced Context Analysis (Triangulation):**
+- `get_direct_api_mapping_prompt`: Now delegates to `get_api_spec_with_direct_llm_query_optimized`, a research-based prompt that enforces structured reasoning (Proposer→Verifier→Reporter), endpoint-first scoping, and explicit mapping justification.
+
+Afterward, improve the mapping results with this MCP tool, focus on the API endpoints of the task to be solved, and generate a better mapping. Use the MCP tool to get the prompt and then use cursor to execute the prompt.
+
+1. **LLM makes MCP tool call:** The LLM executes the `get_direct_api_mapping_prompt` call.
+2. **Prompt return:** The tool returns a specialized, context-rich LLM prompt, with API spec and searchable parameters in the context window.
+3. **LLM execution:** The cursor LLM takes the returned prompt and executes it to generate advanced mapping analyses, finding the top 3 best-fitting endpoints per field.
+4. **More Context:** The returned prompt contains additional context information from the RAG database and previous analysis steps.
+5. Really let the cursor use this prompt and work with the context of the prompt for the enhanced analysis.
+
+After running all three methods, you MUST write `triangulation_summary.md` that contains for each source field: the top candidates from each method, consensus/mismatch flags, and the chosen endpoint/body path with rationale. Include this table in the Phase‑2 mapping report and save its absolute path as `triangulation_summary_path` in the GlobalWorkflowState.
+
+**4.4 Mandatory Verification (NEW):**
+- Run `verify_api_specification` with `verification_type="comprehensive"` against the final mappings before Review.
+- Proceed only if critical endpoints/fields are verified. Store the report path and set a verification flag in state.
+
+### 4.3 Learnings Retrieval (Guidelines injection)
+- Before MappingAgent executes field queries, query `cognitive_learnings` for:
+  - `endpoint_validation`, `mapping_heuristics`, `improved_mapping_protocol`
+- Cite the top 3 guidelines (doc + section) in the mapping report under “Guidelines applied”.
+
+### Step 5: API Specification Verification (NEW - Required)
+- **High-Level Action:** Verify field mappings against actual API specification using semantic analysis and grep-like patterns.
+- **Output:** Verification report with confidence scores, field validation, and actionable recommendations.
+- **When to Use:** AFTER field mapping (Step 4) and BEFORE reasoning agent (Step 6).
+
+- **MCP Tools Used:**
+  **5.1 API Specification Verification:**
+- `verify_api_specification`: Performs comprehensive verification:
+  - Validates all mapped fields exist in API specification
+  - Checks endpoint paths and methods are correct
+  - Provides confidence scores for each mapping
+  - Identifies unmapped or incorrect fields
+  - Suggests alternative field names and endpoints
+
+**5.2 Verification Types:**
+- **Fast Verification** (`verification_type="fast"`): Pattern matching only, very fast
+- **Semantic Verification** (`verification_type="semantic"`): RAG-enhanced fuzzy matching
+- **Comprehensive Verification** (`verification_type="comprehensive"`): Both methods combined
+
+**5.3 Usage Example:**
+```json
+{
+  "tool": "verify_api_specification",
+  "arguments": {
+    "api_spec_path": "/path/to/target_api_spec.json",
+    "field_mappings": "{\"employee_id\": \"employeeId\", \"start_date\": \"startDate\", \"status\": \"status\"}",
+    "verification_type": "comprehensive",
+    "output_format": "markdown"
+  }
+}
+```
+
+**5.4 Required Actions:**
+- Run verification AFTER completing field mapping in Step 4
+- Use comprehensive verification for final validation
+- Review verification report for any unmapped fields
+- Fix any verification failures before proceeding to Step 6
+- Save verification report path for Phase 3 reference
+
+### Step 6: Cognitive Review and Refinement (Enhanced) [Cognitive-Mind Integration]
+- **High-Level Action:** Intelligent evaluation and validation by reasoning agent with LLM post-processing.
+- **Output:** Validated and refined mapping table with quality assessment. I also search for missing fields again and come up with ideas for how to represent Flip's field.
+
+- **MCP Tools Used:**
+  **6.1 Reasoning Agent Analysis:**
+- Reasoning agent: Performs the cognitive review:
+- Checks the completeness and correctness of the mappings
+- Identifies missing required fields and potential mapping errors
+- Evaluates the quality of the confidence values and justifications
+- Suggests improvements or alternative mappings
+- Finds possibilities for fields not yet mapped
+
+**5.2 Enhanced Hallucination Checker (NEW):**
+- **Ground Truth Verification:** The reasoning agent now includes an enhanced hallucination checker that:
+  - Extracts all claimed endpoints from mapping and verification text
+  - Verifies each endpoint against the actual OpenAPI specification
+  - Provides detailed feedback on verified vs hallucinated endpoints
+  - Generates comprehensive reports with actionable next steps
+  - Suggests RAG queries for investigating hallucinated endpoints
+- **Verification Results:** Returns verification status with:
+  - Total endpoints claimed, verified, and unverified counts
+  - Verification rate percentage
+  - Detailed report file path for manual investigation
+  - Ready-to-use MCP tool calls for RAG investigation
+- **Smart Recommendations:** Provides confidence levels and next steps based on verification results
+
+**5.3 LLM Post-Processing:**
+- Reasoning Result Processing:** The reasoning agent tool returns a structured result
+- LLM Analysis:** The LLM takes the reasoning result and performs a detailed analysis:
+- Interprets the reasoning agent's recommendations
+- Apply business logic and domain knowledge
+- Creates a final, validated mapping table
+- Adds additional context and explanations
+
+
+IMPORTANT: After Phase 2 completes (Mapping + Verification + Review), the model must display the mapping report (top 3 matches with full paths), verification summary, and await explicit human approval. Only then proceed to Phase 3.
+
+### PHASE 3: Code Generation & Quality Assurance ⭐ STREAMLINED
+**Goal:** Generate production-ready Kotlin code with TDD tests
+
+**📚 PHASE 3 CODING RULES:**
+- **Primary Rules:** `.cursor/rules/phase3_coding_rules.mdc` - Comprehensive coding standards
+- **Implementation Guide:** `.cursor/rules/phase3_implementation_guide.md` - Practical examples
+- **Quick Reference:** `.cursor/rules/phase3_quick_reference.md` - Developer cheat sheet
+
+**NEW CONSOLIDATED WORKFLOW:**
+
+#### Step 1: Generate Kotlin Code
+```json
+{
+  "tool": "phase3_generate_mapper",
+  "arguments": {
+    "mapping_report_path": "/abs/path/field_mapping_report.md",
+    "output_directory": "/abs/path/outputs/phase3"
+  }
+}
+```
+**Output:** Complete Kotlin Controller/Service/Mapper with security, logging, null-safety
+
+#### Step 2: Quality Audit & TDD Tests
+```json
+{
+  "tool": "phase3_quality_suite", 
+  "arguments": {
+    "kotlin_file_path": "/abs/path/generated_mapper.kt",
+    "mapping_report_path": "/abs/path/field_mapping_report.md"
+  }
+}
+```
+**Output:** Rule-based audit + comprehensive TDD test suite
+
+#### Step 3: Select Best Candidate (Optional - if multiple versions)
+```json
+{
+  "tool": "phase3_select_best_candidate",
+  "arguments": {
+    "kotlin_files": ["/path/v1.kt", "/path/v2.kt"],
+    "mapping_report_path": "/abs/path/field_mapping_report.md"
+  }
+}
+```
+**Output:** Best candidate based on consistency principles
+
+**Exit Gate:** ✅ Tests pass + code quality verified
+
+**Deliverables:**
+- Production-ready Kotlin code
+- Comprehensive test suite
+- Quality audit report
+- Integration package
+
+**Legacy Tool Support:**
+- `generate_kotlin_mapping_code`: Returns specialized LLM prompt for manual execution (fallback option)
+
+Phase 3 execution order and gates:
+- Run consolidated tools: `phase3_generate_mapper` → `phase3_quality_suite` → `phase3_select_best_candidate` (if needed)
+- Only finalize artifacts if tests pass. Persist long-term learnings only if Phase 2 verification rate = 100% and Phase 3 verified.
+
+### PHASE 4: TDD Validation with Cursor LLM Integration ⭐ NEW
+**Goal:** Generate comprehensive TDD test prompts for Cursor LLM with iterative refinement until all tests pass
+
+**TDD VALIDATION WORKFLOW:**
+
+#### Step 1: TDD Validation & Prompt Generation
+```json
+{
+  "tool": "phase4_tdd_validation",
+  "arguments": {
+    "kotlin_file_path": "/abs/path/generated_mapper.kt",
+    "mapping_report_path": "/abs/path/field_mapping_report.md",
+    "output_directory": "/abs/path/outputs/phase4",
+    "max_iterations": 5
+  }
+}
+```
+**Output:** Comprehensive TDD test prompts with reasoning and chain of thought for Cursor LLM
+
+#### Step 2: Cursor LLM Execution
+**Action:** Execute the generated TDD prompt in Cursor LLM following the structured instructions
+**Process:**
+1. Create comprehensive test suite with JUnit 5 and Micronaut Test
+2. Test all Controller endpoints, Service methods, and Mapper transformations
+3. Include edge cases, error handling, and security validation
+4. Run tests and identify failures
+5. Fix implementation issues to make tests pass
+6. Refactor code while maintaining test coverage
+7. Iterate until all tests pass
+
+**Exit Gate:** ✅ All TDD tests pass + comprehensive test coverage achieved
+
+**Deliverables:**
+- Complete TDD test suite with all tests passing
+- Comprehensive test coverage report
+- Production-ready Kotlin implementation
+- Iterative refinement documentation
+- Cursor LLM execution prompts and results
+
+**TDD Principles Applied:**
+- RED: Write failing tests first
+- GREEN: Implement minimal code to pass tests  
+- REFACTOR: Improve code while keeping tests green
+- REPEAT: Continue until all tests pass and implementation is correct
+
+**Integration with Cursor LLM:**
+- Structured prompts with reasoning and chain of thought
+- Clear instructions for test implementation
+- Iterative refinement guidance
+- Validation criteria and success metrics
+- Comprehensive test case specifications
+
+#### Phase 3 Learnings Retrieval (Pre-codegen)
+- Query `cognitive_learnings` for `project_structure`, `testing`, `error_patterns` and reflect applied items in README/code comments where appropriate.
+
+### Phase 4 - TDD Validation & Learning Persistence
+**Goal:** Execute TDD validation with Cursor LLM and persist learnings
+
+**Step 1: TDD Validation (NEW)**
+```json
+{
+  "tool": "phase4_tdd_validation",
+  "arguments": {
+    "kotlin_file_path": "/abs/path/generated_mapper.kt",
+    "mapping_report_path": "/abs/path/field_mapping_report.md",
+    "output_directory": "/abs/path/outputs/phase4",
+    "max_iterations": 5
+  }
+}
+```
+
+**Step 2: Learning Persistence**
+```json
+{
+  "tool": "persist_phase_learnings",
+  "arguments": {
+    "phase2_report_path": "/abs/path/simple_reasoning_agent_report_*.md",
+    "verification_file_path": "/abs/path/endpoints_to_research_*.md", 
+    "phase3_report_path": "/abs/path/kotlin_codegen_report_*.md",
+    "phase3_verified": true,
+    "collection_name": "long_term_memory",
+    "output_directory": "/abs/path/reports"
+  }
+}
+```
+
+**Exit Gate:** ✅ TDD tests pass + learnings persisted + final artifacts delivered
+
+## Step 7: Run the unit test with the Clean.json input
+- Run and debug the unit test to see the results => how they are then displayed in the 3rd-party API.
+
+## 4. 🚨 CRITICAL RULES & CONSTRAINTS
+
+### File Paths & Tool Usage
+- **ALWAYS use absolute paths** - relative paths cause failures
+- **Verify file existence** before tool calls
+- **Create output directories** if they don't exist
+- **🚨 CRITICAL:** Use `read_multiple_files` FIRST to verify API spec accessibility before `upload_api_specification`
+- **Import Error Prevention:** Never call `upload_api_specification` directly without file verification
+
+### Error Handling  
+- **NO MOCK DATA** - fail fast with clear errors
+- **Verify tool outputs** before proceeding to next phase
+- **Log all errors** in `error.log.md`
+
+### Environment Requirements
+- **RAG System:** Requires `QDRANT_URL` and `QDRANT_API_KEY`
+- **Virtual Environment:** Always work in venv
+- **Dependencies:** Verify all requirements.txt packages installed
+
+### Phase Gates (MANDATORY)
+- **Phase 0:** Environment + RAG connectivity verified
+- **Phase 1:** Collections exist + analysis files generated  
+- **Phase 2:** Mappings verified + human approval received
+- **Phase 3:** Tests pass + code quality verified
+- **Phase 4:** Learnings persisted + artifacts delivered
+
+### Memory & Learning
+- **Log everything** in `memory.log.md`
+- **Persist learnings** only after verification gates pass
+- **Query long-term memory** before Phase 2 and Phase 3 planning
+
+## 4.1 🔑 Key Principles
+
+- **Systematic Orchestration:** After each step, assess current state, evaluate progress, and decide next action based on decision tree
+- **Comprehensive Planning:** Always start with detailed analysis, PLANNING.md, TASKS.md, and STATUS.md before any tool execution
+- **Decision-Driven Workflow:** Every tool execution must be preceded by explicit decision point evaluation and rationale
+- **Explainability:** Every important decision, especially in mapping, must be supported by a comprehensible justification
+- **Modularity:** Each step is a standalone tool/agent module with clear input/output definitions
+- **Iteration & Reflection:** The agent can review and correct its own work through the reasoning agent and LLM post-processing
+- **Context Management:** The RAG knowledge base provides focused, relevant context for each step
+- **Live Documentation:** Continuously update TASKS.md and STATUS.md to reflect current state and next decisions
+- **Full Paths:** All file paths must be specified as full, absolute paths
+
+## 5. 🛠️ Supporting Tools (from Cognitive-Mind)
+
+- **System Health:** `test_rag_system` for pre-flight checks of the RAG infrastructure
+- **Workflow Management:** Automatic updates of `PLANNING.md` and `TASK.md` after each step
+- **Advanced Query Strategies:** Multiple `query_api_specification` calls with different search strategies
+- **Context Extension:** LLM-based processing of tool outputs for advanced analysis
+- **Learnings Collection:** Use `upload_learnings_document` to ingest curated rules into `cognitive_learnings`; use `query_api_specification` with `collection_name="cognitive_learnings"` to retrieve phase-specific guidance.
+- **Environment Bootstrap:** Use `copy_rules_to_working_directory` to set up development environment with all rules and guidelines
+- **Enhanced Verification:** The reasoning agent now includes comprehensive endpoint verification to prevent hallucinations and ensure mapping accuracy
+
+## 6. 🔄 Workflow Features (Cognitive-Mind aligned)
+
+- **Environment Bootstrap:** New Phase 0.1 ensures all rules and guidelines are available locally before workflow execution
+- **Enhanced Hallucination Prevention:** The reasoning agent now includes ground truth verification against OpenAPI specifications
+- **Multi-Query Approach:** In step 4, various query combinations are systematically executed
+- **Prompt Chain Processing:** Tools such as `get_direct_api_mapping_prompt` and `reasoning_agent` return prompts/results that are further processed by the LLM
+- **Contextual Inheritance:** Each step uses and extends the context of the previous steps
+- **Absolute Path Requirement:** All file paths must be specified completely and absolutely
+- **Phase 3 Specialization:** New specialized tools for direct mappings, type conversions, complex logic, and TDD test generation
+
+This is how the MCP tools (exposed by the Cognitive-Mind server) can be called:
+I'll analyze the `server_fast.py` file to extract the JSON call format for all MCP tools. Let me examine the tool definitions and their parameters.
+
+Read file: mcp-personal-server-py/template-mcp/server_fast.py (or use the tool list in `.cursor/rules/cognitivemind/2_worker-agent-specifications.md`)
+Based on my analysis of `server_fast.py`, here are the JSON call formats for all **15 active MCP tools**:
+
+
+## 🔧 MCP Tools JSON Call Formats
+
+### 1. **test_rag_system**
+```json
+{
+  "tool": "test_rag_system",
+  "arguments": {}
+}
+```
+
+### 2. **list_available_api_specs**
+```json
+{
+  "tool": "list_available_api_specs",
+  "arguments": {}
+}
+```
+
+### 3. **upload_api_specification** ⚠️ IMPORTANT: Use with file verification
+```json
+{
+  "tool": "upload_api_specification",
+  "arguments": {
+    "openapi_file_path": "/path/to/your/api-spec.json",
+    "collection_name": "my_api_collection",
+    "metadata": {
+      "version": "1.0.0",
+      "description": "Optional metadata object"
+    }
+  }
+}
+```
+**🚨 CRITICAL:** Always use `read_multiple_files` FIRST to verify file accessibility:
+```json
+{
+  "tool": "read_multiple_files",
+  "arguments": {
+    "paths": [
+      "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/flip/hris-absence-management.yml",
+      "/Users/marcbaumholz/Library/CloudStorage/OneDrive-FlipGmbH/test/absences-stackone/backend/src/main/resources/openapi-definitions/stackone/api_stackone.json"
+    ]
+  }
+}
+```
+
+### 4. **query_api_specification**
+```json
+{
+  "tool": "query_api_specification",
+  "arguments": {
+    "query": "user authentication endpoints",
+    "collection_name": "my_api_collection",
+    "limit": 5,
+    "score_threshold": 0.5,
+    "current_path": "/path/to/save/results"
+  }
+}
+```
+
+### 5. **delete_api_specification**
+```json
+{
+  "tool": "delete_api_specification",
+  "arguments": {
+    "collection_name": "my_api_collection"
+  }
+}
+```
+
+### 6. **enhanced_rag_analysis**
+```json
+{
+  "tool": "enhanced_rag_analysis",
+  "arguments": {
+    "fields_to_analyze": ["startDate", "endDate"],
+    "collection_name": "api_collection_name",
+    "context_topic": "Absence mapping",
+    "current_path": "/path/to/save/results"
+  }
+}
+```
+
+### 7. **reasoning_agent** (async)
+```json
+{
+  "tool": "reasoning_agent",
+  "arguments": {
+    "source_analysis_path": "/path/to/source_analysis.md",
+    "api_spec_path": "/path/to/api_spec.json",
+    "output_directory": "/path/to/output/directory",
+    "target_collection_name": "target_api_spec_name"
+  }
+}
+```
+
+### 8. **analyze_json_fields_with_rag**
+```json
+{
+  "tool": "analyze_json_fields_with_rag",
+  "arguments": {
+    "webhook_json_path": "/path/to/webhook.json",
+    "current_directory": "/path/to/save/results",
+    "collection_name": "api_collection_name"
+  }
+}
+```
+
+**CRITICAL FIELD EXTRACTION REQUIREMENTS:**
+- **MUST extract ALL fields** from nested structures including:
+  - Fields from `data` arrays (e.g., `id`, `employeeId`, `type`, `status`, `startDate`, `endDate`, `duration`, `createdAt`, `updatedAt`)
+  - Fields from nested objects (e.g., `duration.value`, `duration.unit`)
+  - Fields from pagination/metadata (e.g., `pagination.page`, `pagination.pageSize`, `pagination.total`)
+  - Fields from any other nested structures
+- **Validation:** Ensure no relevant fields are missed by checking the complete JSON structure
+- **Example:** For JSON with `{"data": [{"id": "abs_123", "employeeId": "12345", ...}], "pagination": {...}}`, extract ALL fields from both `data` array items AND `pagination` object
+
+### 9. **get_direct_api_mapping_prompt**
+```json
+{
+  "tool": "get_direct_api_mapping_prompt",
+  "arguments": {
+    "api_spec_path": "/path/to/api_spec.json",
+    "analysis_md_path": "/path/to/analysis.md",
+    "output_directory": "/path/to/output/dir"
+  }
+}
+```
+**📋 MD FILE WORKFLOW:**
+- **Saves output as:** `direct_api_mapping_prompt_YYYYMMDD_HHMMSS.md`
+- **Contains:** Comprehensive prompt with instructions for LLM usage
+- **Next Steps:** Copy prompt from MD file → Apply to LLM system → Generate mapping analysis
+- **Expected Output:** Endpoint analysis, schema overview, field mapping table, recommendations
+
+### 10. **generate_kotlin_mapping_code**
+```json
+{
+  "tool": "generate_kotlin_mapping_code",
+  "arguments": {
+    "mapping_report_path": "/path/to/mapping_report.md",
+    "output_directory": "/path/to/output/dir"
+  }
+}
+```
+**📋 MD FILE WORKFLOW:**
+- **Saves output as:** `kotlin_code_generation_prompt_YYYYMMDD_HHMMSS.md`
+- **Contains:** Comprehensive prompt with Phase 3 coding rules and instructions
+- **Next Steps:** Copy prompt from MD file → Apply to LLM system → Generate Kotlin code
+- **Expected Output:** Complete Kotlin file with Controller, Service, Mapper layers, security, logging, null-safety
+
+### 11. **iterative_mapping_with_feedback**
+```json
+{
+  "tool": "iterative_mapping_with_feedback",
+  "arguments": {
+    "source_fields": "field1,field2,field3",
+    "target_collection": "api_collection_name",
+    "api_spec_path": "/absolute/path/to/api_spec.json",
+    "output_path": "/absolute/path/to/save/results"
+  }
+}
+```
+
+### 12. **persist_phase_learnings**
+```json
+{
+  "tool": "persist_phase_learnings",
+  "arguments": {
+    "phase2_report_path": "/abs/path/simple_reasoning_agent_report_*.md",
+    "verification_file_path": "/abs/path/enhanced_hallucination_check_*.md",
+    "phase3_report_path": "/abs/path/kotlin_codegen_report_*.md",
+    "phase3_verified": true,
+    "collection_name": "long_term_memory",
+    "output_directory": "/abs/path/reports",
+    "embed": true
+  }
+}
+```
+
+### 13. **upload_learnings_document**
+```json
+{
+  "tool": "upload_learnings_document",
+  "arguments": {
+    "file_path": "/abs/path/.cursor/rules/learninigs/IMPROVED_MAPPING_PROTOCOL.md",
+    "collection_name": "cognitive_learnings",
+    "metadata": {"topics": ["endpoint_validation","mapping_heuristics"], "phase": ["2"], "version": "2025-08-01"}
+  }
+}
+```
+
+### 14. **copy_rules_to_working_directory** (NEW)
+```json
+{
+  "tool": "copy_rules_to_working_directory",
+  "arguments": {
+    "target_directory": ""
+  }
+}
+```
+
+### 15. **get_rules_source_info** (NEW)
+```json
+{
+  "tool": "get_rules_source_info",
+  "arguments": {}
+}
+```
+
+### 16. **verify_api_specification** (NEW - API Verification)
+```json
+{
+  "tool": "verify_api_specification",
+  "arguments": {
+    "api_spec_path": "/path/to/api_spec.json",
+    "field_mappings": "{\"employee_id\": \"employeeId\", \"start_date\": \"startDate\"}",
+    "verification_type": "comprehensive",
+    "output_format": "markdown"
+  }
+}
+```
+**Purpose**: Verify field mappings against API specification using semantic analysis and grep-like patterns.
+**When to Use**: 
+- **Phase 2**: After field mapping to validate mappings against actual API spec
+- **Quality Assurance**: Before proceeding to Phase 3 code generation
+- **Hallucination Prevention**: Verify endpoints and fields exist in API spec
+**Returns**: Verification report with confidence scores and actionable recommendations.
+
+### 17. **phase3_generate_mapper** (CONSOLIDATED - Phase 3)
+```json
+{
+  "tool": "phase3_generate_mapper",
+  "arguments": {
+    "mapping_report_path": "/path/to/mapping_report.md",
+    "output_directory": "/path/to/outputs/phase3"
+  }
+}
+```
+**Purpose**: End-to-end Kotlin code generation including Controller, Service, and Mapper layers with security, logging, and null-safety.
+**Returns**: Complete Kotlin Controller/Service/Mapper with security annotations and logging.
+
+### 18. **phase3_quality_suite** (CONSOLIDATED - Phase 3)
+```json
+{
+  "tool": "phase3_quality_suite",
+  "arguments": {
+    "kotlin_file_path": "/path/to/generated_mapper.kt",
+    "mapping_report_path": "/path/to/mapping_report.md"
+  }
+}
+```
+**Purpose**: Performs rule-based code audit and generates comprehensive TDD test suites following Test-Driven Development principles.
+**Returns**: Quality audit report and comprehensive TDD test suite with coverage summary.
+
+### 19. **phase3_select_best_candidate** (CONSOLIDATED - Phase 3)
+```json
+{
+  "tool": "phase3_select_best_candidate",
+  "arguments": {
+    "kotlin_files": ["/path/v1.kt", "/path/v2.kt"],
+    "mapping_report_path": "/path/to/mapping_report.md"
+  }
+}
+```
+**Purpose**: Selects the best Kotlin code candidate from multiple generated versions using consistency principles and heuristics.
+**Returns**: Best candidate path with selection rationale and consistency score.
+
+## 📋 Tool Categories (19 Tools Total)
+
+### **Phase 1 - Data Extraction & RAG Tools** (6 tools)
+- `test_rag_system` - Test RAG connectivity
+- `list_available_api_specs` - List collections
+- `upload_api_specification` - Upload API specs
+- `query_api_specification` - Semantic search
+- `delete_api_specification` - Delete collections
+- `upload_learnings_document` - Upload learning docs
+
+### **Phase 2 - Analysis & Mapping Tools** (4 tools)
+- `enhanced_rag_analysis` - Enhanced semantic analysis
+- `reasoning_agent` - Complete orchestration ⭐
+- `iterative_mapping_with_feedback` - ReAct pattern mapping
+- `analyze_json_fields_with_rag` - Combined analysis
+
+### **Phase 3 - Code Generation Tools** (4 tools - CONSOLIDATED)
+- `generate_kotlin_mapping_code` - Generate mapping prompts (legacy)
+- `phase3_generate_mapper` - End-to-end Kotlin generator ⭐
+- `phase3_quality_suite` - Code audit + TDD tests ⭐
+- `phase3_select_best_candidate` - Consistency selector ⭐
+
+### **Shared Utilities** (5 tools)
+- `copy_rules_to_working_directory` - Bootstrap environment
+- `get_rules_source_info` - View rules structure
+- `get_direct_api_mapping_prompt` - Direct analysis
+- `persist_phase_learnings` - Long-term memory
+- `analyze_fields_with_rag_and_llm` - Alternative analysis (commented out)
+
+
+All tools return string responses with detailed markdown-formatted reports and analysis results.
+
+## 📋 Tool Usage Guidelines
+
+### **When to Use API Specification Verification:**
+
+**Phase 2 - After Field Mapping:**
+- **When**: After completing Step 4 (field mapping) and before Step 6 (reasoning agent)
+- **Why**: Validate that all mapped fields actually exist in the target API specification
+- **How**: Use `verification_type="comprehensive"` for thorough validation
+- **Action**: Fix any verification failures before proceeding
+
+**Quality Assurance - Before Phase 3:**
+- **When**: Before starting Phase 3 code generation
+- **Why**: Ensure all mappings are correct to prevent code generation errors
+- **How**: Use `verification_type="fast"` for quick validation
+- **Action**: Review verification report and address any issues
+
+**Hallucination Prevention:**
+- **When**: When you suspect field mappings might be incorrect
+- **Why**: Verify endpoints and fields exist in actual API spec
+- **How**: Use `verification_type="semantic"` for fuzzy matching
+- **Action**: Use results to correct any hallucinated mappings
+
+### **When to Use Each Phase 3 Tool (CONSOLIDATED WORKFLOW):**
+
+1. **End-to-End Generation** (`phase3_generate_mapper`):
+   - Use for complete Kotlin Controller/Service/Mapper generation
+   - Includes direct mappings, type conversions, and complex logic
+   - Security annotations, logging, and null-safety included
+   - Always run first in Phase 3 workflow
+
+2. **Quality Assurance** (`phase3_quality_suite`):
+   - Run after code generation to audit and test
+   - Generates comprehensive TDD test coverage
+   - Rule-based code auditing with quality scores
+   - Always run after mapper generation
+
+3. **Best Candidate Selection** (`phase3_select_best_candidate`):
+   - Use when multiple code versions exist
+   - Consistency-based selection with heuristics
+   - Optional step for quality optimization
+   - Run last if multiple candidates available
+
+### **Quick Reference - Tool Selection:**
+- **Direct**: `employee.id` → `employeeId` (no transformation)
+- **Type**: `"2024-01-15"` → `LocalDate` (data type change)
+- **Complex**: `firstName + lastName` → `fullName` (business logic)
+- **Tests**: Always last, covers all scenarios
+
+### **Input Requirements:**
+- All tools require `mapping_report_path` from Phase 2
+- `ground_truth_path` is optional but recommended for accuracy
+- `output_directory` should be consistent across all Phase 3 tools
+- Use absolute paths for all file references
+
+### **LLM Model Used:**
+- All Phase 3 tools use `qwen/qwen3-coder:free` from OpenRouter
+- Free model for cost-effective continuous integration
+- Optimized for Kotlin code generation
+
+### **Output Integration:**
+- Each tool generates timestamped Kotlin files
+- Files are saved to the specified `output_directory`
+- Integration points are provided for combining all generated code
+- Test suites cover all mapping scenarios and edge cases
+
+### **Generated File Structure:**
+```
+outputs/phase3/
+├── DirectMapper_[timestamp].kt         # Simple field mappings
+├── TypeConversions_[timestamp].kt      # Conversion functions  
+├── TypeConversionMapper_[timestamp].kt # Integrated converter
+├── ComplexFunctions_[timestamp].kt     # Business logic functions
+├── ComplexLogicMapper_[timestamp].kt   # Integrated complex mapper
+└── tests/
+    ├── MapperTestSuite_[timestamp].kt  # Complete test file
+    └── TestCases_[timestamp].json      # Test metadata
+```
+
+### **Example Output:**
+```kotlin
+// Direct Mapping
+employeeId = source.employee.id,
+email = source.employee.email ?: "",
+
+// Type Conversion
+fun String.toLocalDate(): LocalDate = LocalDate.parse(this)
+hireDate = source.startDate.toLocalDate()
+
+// Complex Logic
+fun mapFullName(source: Employee): String {
+    return "${source.firstName} ${source.lastName}".trim()
+}
+fullName = mapFullName(source)
+
+// Test Case
+@Test
+fun test_employee_id_mapping() {
+    val source = Employee(id = "123")
+    val result = mapper.map(source)
+    assertEquals("123", result.employeeId)
+}
+```
+
+## 6.1 🧠 Long‑term Memory (RAG) – Learnings Persistence and Retrieval
+
+- Purpose: Persist concise Do/Don't/How‑To learnings after successful Phase 2 (verification passed) and Phase 3 (code generation verified) to a dedicated vector collection for future retrieval.
+- Gatekeeping: Only persist if both gates are satisfied to avoid storing wrong learnings.
+- Artifact sources:
+  - Phase 2 Report: `simple_reasoning_agent_report_*.md`
+  - Phase 2 Verification: `enhanced_hallucination_check_*.md` (must indicate all endpoints verified)
+  - Phase 3 Report: Kotlin/codegen summary MD
+
+### When to Persist
+- After Phase 2 report generated AND its enhanced hallucination checker report indicates all endpoints verified (verification rate = 100%)
+- After Phase 3 mapping/codegen has been validated (human approval or tests passing)
+
+### How to Persist (MCP Tool)
+```json
+{
+  "tool": "persist_phase_learnings",
+  "arguments": {
+    "phase2_report_path": "/abs/path/simple_reasoning_agent_report_2025....md",
+    "verification_file_path": "/abs/path/endpoints_to_research_2025....md",
+    "phase3_report_path": "/abs/path/kotlin_codegen_report_2025....md",
+    "phase3_verified": true,
+    "collection_name": "long_term_memory",
+    "output_directory": "/abs/path/reports",
+    "embed": true
+  }
+}
+```
+
+### When to Retrieve
+- At the beginning of Phase 2 planning: consult "Phase 2 Learnings" for endpoint scoping rules, method filters, and common pitfalls
+- Before code generation in Phase 3: consult "Phase 3 Learnings" for codegen best practices and pitfalls
+
+### Retrieval Strategy
+- Use `query_api_specification` with the `long_term_memory` collection and targeted phrases like "Phase 2 Learnings" or specific patterns (e.g., "How‑To: Verify endpoints via spec paths")
+- For in-run guidance (Planning/Mapping/Codegen), use `query_api_specification` with `collection_name: "cognitive_learnings"` and tags per phase (e.g., `BDI`, `ToT`, `endpoint_validation`, `project_structure`).
+- Re-rank by semantic proximity to the current task (endpoint scoping vs codegen)
+
+- `iterative_mapping_with_feedback` - Iterative mapping with feedback loop
+
+---
+
+## 🔧 TROUBLESHOOTING GUIDE
+
+### Common Issues:
+1. **RAG Connection Failed** → Check `QDRANT_URL` and `QDRANT_API_KEY`
+2. **Import Errors (`RAGChunkingMixin`)** → Use `read_multiple_files` FIRST, then `upload_api_specification`
+3. **Path Errors** → Use absolute paths only
+4. **Empty Results** → Check collection names and query parameters
+5. **Test Failures** → Review generated code and mapping logic
+6. **Upload API Specification Fails** → Always verify file accessibility with `read_multiple_files` first
+
+### Recovery Procedures:
+1. **Reset RAG Collections:** Use `delete_api_specification()` and re-upload
+2. **Restart Phase:** Clear outputs and re-run from phase gate
+3. **Manual Override:** Use `get_direct_api_mapping_prompt()` for small specs
+4. **Fallback Generation:** Use `generate_kotlin_mapping_code()` if orchestrator fails
+
+---
+
+## 📈 SUCCESS METRICS
+
+### Phase Completion Rates:
+- **Phase 0:** 100% (Bootstrap always succeeds)
+- **Phase 1:** 95% (Occasional upload issues)
+- **Phase 2:** 85% (Verification dependent on API quality)
+- **Phase 3:** 90% (Code generation reliable with good mappings)
+- **Phase 4:** 95% (Learning persistence rarely fails)
+
+### Quality Gates:
+- **Mapping Accuracy:** >90% field coverage
+- **Code Quality:** All TDD tests pass
+- **Performance:** <30 seconds per phase (excluding human approval)
+- **Memory Efficiency:** <2GB RAM usage
+
+---
+
+## 🎓 LEARNING INTEGRATION
+
+### Query Long-term Memory:
+Before Phase 2 and Phase 3, query the `long_term_memory` collection:
+- **Phase 2:** Query for "mapping strategies", "endpoint validation", "field analysis"  
+- **Phase 3:** Query for "code generation", "TDD patterns", "Kotlin best practices"
+
+### Persistence Criteria:
+Only persist learnings when:
+1. Phase 2 verification rate = 100% (all endpoints verified)
+2. Phase 3 implementation verified as correct (tests pass + human approval)
+3. No critical errors encountered during workflow
+
+---
+
+*This unified rules document integrates: UNIFIED_MCP_INTEGRATION_RULES.md, MCP_TOOLPLAYBOOK.md, COGNITIVE_MIND_WORKFLOW.md*
+
+**🔄 Keep this document updated as MCP tools evolve**

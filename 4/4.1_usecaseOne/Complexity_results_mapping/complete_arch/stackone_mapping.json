@@ -1,0 +1,207 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": [
+    {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.employee_id",
+      "notes": "Direct 1:1 mapping from Flip employee external ID to StackOne employee ID field. Both represent employee identification.",
+      "mapping_type": "Direct"
+    },
+    {
+      "source_field": "status", 
+      "target_field": "status",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.status",
+      "notes": "Direct 1:1 mapping of absence status. May require enum value conversion between Flip and StackOne status values.",
+      "mapping_type": "Conversion"
+    },
+    {
+      "source_field": "start_date",
+      "target_field": "start_date", 
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.start_date",
+      "notes": "Direct 1:1 mapping of start date. Both are string format, may need date format conversion (ISO 8601).",
+      "mapping_type": "Conversion"
+    },
+    {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.end_date", 
+      "notes": "Direct 1:1 mapping of end date. Both are string format, may need date format conversion (ISO 8601).",
+      "mapping_type": "Conversion"
+    },
+    {
+      "source_field": "start_half_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.start_half_day",
+      "notes": "Direct 1:1 mapping for half-day start indicator. Boolean field indicating if absence starts mid-day.",
+      "mapping_type": "Direct"
+    },
+    {
+      "source_field": "end_half_day", 
+      "target_field": "end_half_day",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.end_half_day",
+      "notes": "Direct 1:1 mapping for half-day end indicator. Boolean field indicating if absence ends mid-day.",
+      "mapping_type": "Direct"
+    },
+    {
+      "source_field": "absence_type_external_id",
+      "target_field": "type", 
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.type",
+      "notes": "Maps Flip absence type external ID to StackOne type field. Requires lookup/conversion from Flip type ID to StackOne type enum/object.",
+      "mapping_type": "Logical"
+    },
+    {
+      "source_field": "amount",
+      "target_field": "duration",
+      "ground_truth_path": "TimeOff schema -> TimeOff.duration",
+      "notes": "Maps Flip amount field to StackOne duration field. Duration is calculated from start_date/end_date or can be explicitly set. String format in ISO 8601 duration format.",
+      "mapping_type": "Logical"
+    },
+    {
+      "source_field": "unit",
+      "target_field": "duration",
+      "ground_truth_path": "TimeOff schema -> TimeOff.duration",
+      "notes": "Unit information is implicit in StackOne duration field (ISO 8601 format). Flip unit field can be used to format duration string appropriately.",
+      "mapping_type": "Logical"
+    },
+    {
+      "source_field": "employee_note",
+      "target_field": "passthrough",
+      "ground_truth_path": "POST /unified/hris/time_off -> HrisCreateTimeOffRequestDto.passthrough",
+      "notes": "Maps Flip employee note to StackOne passthrough object. This allows provider-specific data to be passed through to the target system.",
+      "mapping_type": "Logical"
+    }
+  ],
+  "unmappable_fields": [],
+  "processing_context": {
+    "api_endpoint": "POST /unified/hris/time_off",
+    "alternative_endpoint": "POST /unified/hris/employees/{id}/time_off", 
+    "request_schema": "HrisCreateTimeOffRequestDto",
+    "response_schema": "TimeOff",
+    "analysis_timestamp": "2025-09-18T16:37:19Z",
+    "rag_collection": "stackone_api_v1",
+    "flip_collection": "flip_api_v1",
+    "tools_used": [
+      "upload_api_specification",
+      "enhanced_rag_analysis", 
+      "get_direct_api_mapping_prompt",
+      "reasoning_agent",
+      "query_api_specification"
+    ],
+    "verification_method": "RAG semantic search with score threshold 0.6+",
+    "mapping_confidence": "High - Complete schema analysis with all fields mapped"
+  },
+  "total_fields_identified": 10,
+  "mapped_fields_count": 10,
+  "unmappable_fields_count": 0,
+  "mapping_coverage": "100%",
+  "complete_stackone_schemas": {
+    "HrisCreateTimeOffRequestDto": {
+      "description": "Request schema for creating time off requests",
+      "fields": [
+        "employee_id (string): The employee ID",
+        "approver_id (string): The approver ID",
+        "status: The status of the time off request",
+        "type: The type of the time off request", 
+        "start_date (string): The start date of the time off request",
+        "end_date (string): The end date of the time off request",
+        "start_half_day: True if the start of the time off request begins half way through the day",
+        "end_half_day: True if the end of the time off request ends half way through the day",
+        "passthrough (object): Value to pass through to the provider"
+      ]
+    },
+    "TimeOff": {
+      "description": "Complete response schema for time off data",
+      "fields": [
+        "id (string): Unique identifier",
+        "remote_id (string): Provider's unique identifier",
+        "employee_id (string): The employee ID",
+        "remote_employee_id (string): Provider's unique identifier of the employee",
+        "approver_id (string): The approver ID",
+        "remote_approver_id (string): Provider's unique identifier of the approver",
+        "status: The status of the time off request",
+        "type: The type of the time off request",
+        "start_date (string): The start date of the time off request",
+        "end_date (string): The end date of the time off request",
+        "start_half_day: True if the start of the time off request begins half way through the day",
+        "end_half_day: True if the end of the time off request ends half way through the day",
+        "duration (string): The duration of the time off request",
+        "created_date (string): The created date of the time off request",
+        "updated_date (string): The updated date of the time off request"
+      ]
+    }
+  },
+  "additional_stackone_fields": [
+    {
+      "field": "approver_id",
+      "description": "The approver ID - not present in Flip source fields",
+      "usage": "Optional field for workflow approval",
+      "mapping_opportunity": "Could be mapped from Flip approval workflow data if available"
+    },
+    {
+      "field": "passthrough", 
+      "description": "Object for provider-specific data",
+      "usage": "Used for employee_note and any other custom data",
+      "mapping_opportunity": "Flexible field for any additional Flip data"
+    },
+    {
+      "field": "duration",
+      "description": "The duration of the time off request in ISO 8601 format",
+      "usage": "Calculated from start_date/end_date or explicitly set",
+      "mapping_opportunity": "Maps from Flip amount + unit fields"
+    },
+    {
+      "field": "id",
+      "description": "Unique identifier (response only)",
+      "usage": "Generated by StackOne after creation",
+      "mapping_opportunity": "Returned in response, not used in request"
+    },
+    {
+      "field": "remote_id",
+      "description": "Provider's unique identifier (response only)",
+      "usage": "External system identifier",
+      "mapping_opportunity": "Returned in response, not used in request"
+    },
+    {
+      "field": "created_date",
+      "description": "The created date (response only)",
+      "usage": "Timestamp when request was created",
+      "mapping_opportunity": "Returned in response, not used in request"
+    },
+    {
+      "field": "updated_date",
+      "description": "The updated date (response only)",
+      "usage": "Timestamp when request was last updated",
+      "mapping_opportunity": "Returned in response, not used in request"
+    }
+  ],
+  "implementation_recommendations": [
+    "Use POST /unified/hris/time_off endpoint as primary integration point",
+    "Implement date format conversion to ISO 8601 for start_date/end_date", 
+    "Map absence_type_external_id to StackOne type enum through lookup table",
+    "Calculate duration from amount + unit fields and format as ISO 8601",
+    "Use passthrough object for employee_note and any additional custom data",
+    "Consider approver_id field for workflow requirements if available in Flip",
+    "Implement status enum mapping between Flip and StackOne values",
+    "Handle response fields (id, remote_id, created_date, updated_date) in response processing"
+  ],
+  "field_mapping_summary": {
+    "direct_mappings": 5,
+    "conversion_mappings": 3,
+    "logical_mappings": 2,
+    "unmappable_fields": 0,
+    "total_coverage": "100%",
+    "additional_opportunities": 7
+  }
+}

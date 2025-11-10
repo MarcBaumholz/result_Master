@@ -1,0 +1,104 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "PersonId",
+      "ground_truth_path": "/absences (requestBody.PersonId)",
+      "confidence": 0.95,
+      "notes": "Direct mapping",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "AbsenceTypeId",
+      "ground_truth_path": "/absences (requestBody.AbsenceTypeId)",
+      "confidence": 0.95,
+      "notes": "Direct mapping to AbsenceTypeId",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "target_field": "StartDate",
+      "ground_truth_path": "/absences (requestBody.StartDate)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "EndDate",
+      "ground_truth_path": "/absences (requestBody.EndDate)",
+      "confidence": 0.95,
+      "notes": "YYYY-MM-DD",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "StartTime",
+      "ground_truth_path": "/absences (requestBody.StartTime)",
+      "confidence": 0.8,
+      "notes": "Logical: derive true/false based on StartTime vs working day rules",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "EndTime",
+      "ground_truth_path": "/absences (requestBody.EndTime)",
+      "confidence": 0.8,
+      "notes": "Logical: derive true/false based on EndTime vs working day rules",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "target_field": "Days|Hours",
+      "ground_truth_path": "/absences (requestBody.Days or requestBody.Hours)",
+      "confidence": 0.9,
+      "notes": "Logical: if unit=DAYS map to Days; if unit=HOURS map to Hours",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "target_field": "derived",
+      "ground_truth_path": "/absences (derived from Days/Hours)",
+      "confidence": 0.85,
+      "notes": "Logical: infer DAYS if Days present; HOURS if Hours present",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "Description",
+      "ground_truth_path": "/absences (requestBody.Description)",
+      "confidence": 0.9,
+      "notes": "Free-text description field is best fit for employee_note",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [
+    "status"
+  ],
+  "unmappable_analysis": {
+    "status": {
+      "reason": "Status managed by workflow; not settable on create",
+      "api_limitation": "Field available in response only"
+    }
+  },
+  "mapping_summary": {
+    "direct_mappings": 4,
+    "conversion_mappings": 0,
+    "logical_mappings": 4,
+    "unmappable_fields": 1,
+    "mapping_coverage": "90%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/absences (POST)",
+      "/absences (GET)",
+      "/absences/{absencesUniqID} (GET)"
+    ],
+    "half_day_logic": "Derive from StartTime/EndTime",
+    "unit_logic": "Derive from Days/Hours"
+  }
+}

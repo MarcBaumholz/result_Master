@@ -1,0 +1,90 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "id",
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (path parameter: id)",
+      "notes": "HiBob uses employee ID in path parameter. Map path parameter 'id' to Flip's employee_external_id for API calls",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "policyType",
+      "target_field": "absence_type_external_id", 
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.policyType)",
+      "notes": "HiBob policyType maps to Flip absence_type_external_id. Both represent the type/category of time off",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/timeoff/employees/{id}/requests/{requestId} (response.status)",
+      "notes": "Both APIs use 'status' field to indicate request state. May need enum value mapping between systems",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "startDate",
+      "target_field": "start_date",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.startDate)",
+      "notes": "Direct date field mapping. HiBob uses date format, Flip expects YYYY-MM-DD string",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "endDate", 
+      "target_field": "end_date",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.endDate)",
+      "notes": "Direct date field mapping. HiBob uses date format, Flip expects YYYY-MM-DD string",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "startDatePortion",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.startDatePortion)",
+      "notes": "Convert HiBob enum (all_day/morning/afternoon) to boolean. morning=false, afternoon=true, all_day=false",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "endDatePortion",
+      "target_field": "end_half_day", 
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.endDatePortion)",
+      "notes": "Convert HiBob enum (all_day/morning/afternoon) to boolean. morning=false, afternoon=true, all_day=false",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "days",
+      "target_field": "amount",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.days)",
+      "notes": "Use HiBob 'days' field as amount. For hour-based requests, convert hours to days using business rules",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "source_field": "N/A - derived from days/hours",
+      "target_field": "unit",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.days vs requestBody.hours)",
+      "notes": "Determine unit based on HiBob request type. If 'days' field used → 'DAYS', if 'hours' field used → 'HOURS'",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "description",
+      "target_field": "employee_note",
+      "ground_truth_path": "/timeoff/employees/{id}/requests (requestBody.description)",
+      "notes": "Direct mapping of employee-provided description/notes",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "HiBob Time Off API → Flip HRIS Absence Management API mapping analysis. HiBob uses employee ID in path parameter and supports both days/hours for time off requests.",
+  "total_fields_identified": 10,
+  "mapping_complexity": "Medium - requires enum conversions for half-day logic and unit determination logic"
+}

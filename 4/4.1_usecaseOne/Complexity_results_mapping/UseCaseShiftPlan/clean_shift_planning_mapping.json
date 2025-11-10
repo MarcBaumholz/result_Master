@@ -1,0 +1,47 @@
+{
+  "method": "POST",
+  "path": "/unified/hris/ShiftPlanningCreated",
+  "queryStringParameters": {
+    "raw": [
+      "false"
+    ],
+    "page_size": [
+      "100"
+    ]
+  },
+  "headers": {
+    "x-account-id": [
+      "45224989476719543518"
+    ]
+  },
+  "body": {
+    "input": {
+      "event": "ShiftPlanningCreated",
+      "timestamp": "2025-04-23 10:15:30+00:00",
+      "data": {
+        "employee_id": "245s",
+        "date": "2025-05-01",
+        "clock_in_time": "09:00:00",
+        "clock_out_time": "17:00:00",
+        "hours_worked": "8.0",
+        "break_start": "12:00:00",
+        "break_end": "13:00:00",
+        "overtime_hours": "0.0",
+        "regular_hours": "8.0",
+        "work_schedule_type": "shifts",
+        "employment_type": "permanent",
+        "start_date": "2025-05-01",
+        "end_date": "2025-05-01",
+        "active": "true",
+        "department": "Engineering",
+        "status": "active",
+        "notes": "Regular shift work"
+      }
+    }
+  },
+  "keepAlive": true,
+  "secure": false,
+  "protocol": "HTTP_1_1",
+  "localAddress": "172.19.0.2:1080",
+  "remoteAddress": "192.168.65.1:35472"
+}

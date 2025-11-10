@@ -1,0 +1,167 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /leave-management/requests",
+    "reasoning": "Most relevant endpoint for creating leave requests in Sage HR",
+    "required_structure": "Form data structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "/leave-management/requests (formData.employee_id)",
+      "notes": "Direct mapping - employee external ID maps to employee_id in Sage API with type conversion from string to integer",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "time_off_policy_id",
+      "ground_truth_path": "/leave-management/requests (formData.time_off_policy_id)",
+      "notes": "Semantic mapping - absence type maps to time off policy ID with type conversion from string to integer",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - handled by approval workflow",
+      "notes": "Status not part of creation request - handled by Sage HR approval workflow after request submission",
+      "mapping_type": "Unmappable"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "date (single) or date_from (multi)",
+      "ground_truth_path": "/leave-management/requests (formData.date or formData.date_from)",
+      "notes": "Direct mapping - start date maps to date field based on request type (single vs multi-day)",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "date (single) or date_to (multi)",
+      "ground_truth_path": "/leave-management/requests (formData.date or formData.date_to)",
+      "notes": "Direct mapping - end date maps to date field based on request type (single vs multi-day)",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "half_day_start",
+      "ground_truth_path": "/leave-management/requests (formData.half_day_start)",
+      "notes": "Direct mapping - half day start maps to half_day_start boolean field",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "half_day_end",
+      "ground_truth_path": "/leave-management/requests (formData.half_day_end)",
+      "notes": "Direct mapping - half day end maps to half_day_end boolean field",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "days",
+      "ground_truth_path": "/leave-management/requests (formData.days)",
+      "notes": "Semantic mapping - amount maps to days field for day-based calculations",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track units separately - uses days field for day-based calculations",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "reason",
+      "ground_truth_path": "/leave-management/requests (formData.reason)",
+      "notes": "Employee note maps to reason field for leave request justification",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 8,
+    "unmappable_fields": 2,
+    "mapping_types": {
+      "Direct": 6,
+      "Conversion": 2,
+      "Unmappable": 2
+    },
+    "complexity_analysis": {
+      "simple_mappings": 6,
+      "conversion_mappings": 2,
+      "unmappable_fields": 2
+    },
+    "confidence_scores": {
+      "high_confidence": 8,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 2
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "absence_type_external_id",
+        "from_type": "string",
+        "to_type": "integer",
+        "conversion_method": "Convert string to integer for time_off_policy_id field"
+      },
+      {
+        "field": "amount",
+        "from_type": "number",
+        "to_type": "number",
+        "conversion_method": "Map to days field for day-based calculations"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Convert absence_type_external_id from string to integer",
+      "Map amount to days field for day-based calculations"
+    ],
+    "missing_fields_handling": [
+      "status: Consider if handled by system or different endpoint",
+      "unit: Use days field for day-based calculations"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "employee_id must be valid employee ID in system",
+      "time_off_policy_id must be valid policy ID in system",
+      "Date fields must be in proper format"
+    ],
+    "business_logic_considerations": [
+      "API uses form data structure - easier to implement",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/leave-management/requests",
+    "request_structure": {
+      "root_level": "form",
+      "required_sections": ["employee_id", "time_off_policy_id", "date"],
+      "nested_levels": 0,
+      "complexity": "Low - simple form structure"
+    },
+    "field_requirements": {
+      "required_fields": 8,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

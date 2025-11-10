@@ -1,0 +1,126 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employee_id",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.employee_id)",
+      "confidence": 0.95,
+      "notes": "Direct mapping",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "type.value",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.type.value)",
+      "confidence": 0.9,
+      "notes": "Conversion: map provider types to StackOne enum",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "status.value",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.status.value)",
+      "confidence": 0.95,
+      "notes": "Conversion: REQUESTED→pending, APPROVED→approved, DECLINED→rejected, CANCELLED→cancelled",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "start_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.start_date)",
+      "confidence": 0.9,
+      "notes": "Conversion: YYYY-MM-DD → ISO 8601 date-time format",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "target_field": "end_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.end_date)",
+      "confidence": 0.9,
+      "notes": "Conversion: YYYY-MM-DD → ISO 8601 date-time format",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "target_field": "start_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.start_half_day)",
+      "confidence": 0.95,
+      "notes": "Direct boolean mapping",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "target_field": "end_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.end_half_day)",
+      "confidence": 0.95,
+      "notes": "Direct boolean mapping",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "target_field": "duration",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (requestBody.duration)",
+      "confidence": 0.85,
+      "notes": "Conversion: map numeric amount to ISO 8601 duration format (P3Y6M4DT12H30M5S)",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "derived",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (derived from duration)",
+      "confidence": 0.85,
+      "notes": "Logical: derive from duration field - if duration contains days, unit is DAYS; if hours, unit is HOURS",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "unavailable",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (no equivalent field)",
+      "confidence": 0.6,
+      "notes": "No employee note field in TimeOff schema",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "unmappable_fields": [
+    "employee_note"
+  ],
+  "unmappable_analysis": {
+    "employee_note": {
+      "reason": "Not supported in TimeOff schema",
+      "api_limitation": "No field for employee notes or comments"
+    }
+  },
+  "mapping_summary": {
+    "direct_mappings": 3,
+    "conversion_mappings": 5,
+    "logical_mappings": 1,
+    "unmappable_fields": 1,
+    "mapping_coverage": "90%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/unified/hris/employees/{id}/time_off (POST - Create time off request)",
+      "/unified/hris/employees/{id}/time_off (GET - List time off requests)"
+    ],
+    "schemas_analyzed": [
+      "TimeOff (main schema)",
+      "TimeOffStatusEnum (status values)",
+      "TimeOffTypeEnum (type values)"
+    ],
+    "hidden_fields_found": [
+      "duration field (ISO 8601 duration format)",
+      "approver_id field (approver information)",
+      "remote_id field (provider's unique identifier)",
+      "created_date/updated_date fields (audit trail)"
+    ],
+    "half_day_logic": "Direct boolean fields start_half_day and end_half_day",
+    "status_logic": "Status enum with values: approved, cancelled, rejected, pending, unmapped_value",
+    "unit_logic": "Derive from duration field - parse ISO 8601 duration to determine unit",
+    "amount_logic": "Use duration field in ISO 8601 format (P3Y6M4DT12H30M5S)"
+  },
+  "processing_context": "StackOne Unified HRIS API - uses ISO 8601 duration format and supports multiple status values",
+  "enhancement_confidence": 0.95,
+  "total_fields_identified": 10
+}

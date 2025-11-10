@@ -1,0 +1,108 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.employee_id)",
+      "notes": "Direct mapping - employee identifier in both systems. Personio uses integer type.",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id", 
+      "target_field": "time_off_type_id",
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.time_off_type_id)",
+      "notes": "Direct mapping - time-off type identifier in both systems. Personio uses integer type.",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date", 
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.start_date)",
+      "notes": "Direct mapping - both use YYYY-MM-DD string format for absence start date.",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.end_date)", 
+      "notes": "Direct mapping - both use YYYY-MM-DD string format for absence end date.",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "half_day_start",
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.half_day_start)",
+      "notes": "Direct mapping - both use boolean to indicate if absence starts at half-day.",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day", 
+      "target_field": "half_day_end",
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.half_day_end)",
+      "notes": "Direct mapping - both use boolean to indicate if absence ends at half-day.",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "comment", 
+      "ground_truth_path": "/company/time-offs (CreateTimeOffPeriodRequest.comment)",
+      "notes": "Direct mapping - optional comment/note field in both systems.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": {
+    "status": {
+      "source_field": "status",
+      "reason": "Personio CreateTimeOffPeriodRequest does not include status field. Status appears to be handled differently in Personio workflow.",
+      "ground_truth_path": "N/A - Field not present in CreateTimeOffPeriodRequest schema",
+      "notes": "Personio likely handles approval workflow separately from creation request. May need to query existing time-off periods for status information.",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "source_field": "amount",
+      "reason": "Personio CreateTimeOffPeriodRequest does not include amount field. Duration calculated from start_date to end_date.",
+      "ground_truth_path": "N/A - Field not present in CreateTimeOffPeriodRequest schema", 
+      "notes": "Personio calculates duration automatically from start and end dates. If amount is needed, it must be calculated from date difference.",
+      "mapping_type": "Unmappable"
+    },
+    "unit": {
+      "source_field": "unit",
+      "reason": "Personio CreateTimeOffPeriodRequest does not include unit field. Always works with full days.",
+      "ground_truth_path": "N/A - Field not present in CreateTimeOffPeriodRequest schema",
+      "notes": "Personio time-off system works in full days, no unit specification needed. Half-days handled via half_day_start/half_day_end flags.",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "processing_context": "Personio API time-off management - primary endpoint POST /company/time-offs with CreateTimeOffPeriodRequest schema",
+  "total_fields_identified": 10,
+  "successfully_mapped": 7,
+  "unmappable": 3,
+  "mapping_success_rate": "70%",
+  "endpoint_analysis": {
+    "primary_endpoint": "POST /company/time-offs",
+    "schema": "CreateTimeOffPeriodRequest",
+    "required_fields": ["employee_id", "time_off_type_id", "start_date", "end_date", "half_day_start", "half_day_end"],
+    "optional_fields": ["comment"],
+    "data_types": {
+      "employee_id": "integer",
+      "time_off_type_id": "integer", 
+      "start_date": "string (YYYY-MM-DD)",
+      "end_date": "string (YYYY-MM-DD)",
+      "half_day_start": "boolean",
+      "half_day_end": "boolean",
+      "comment": "string"
+    }
+  }
+}

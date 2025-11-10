@@ -1,0 +1,98 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "target_field": "employeeId",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (pathParameter.employeeId)",
+      "confidence": 0.95,
+      "notes": "Employee ID passed as path parameter in BambooHR API",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "timeOffTypeId",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.timeOffTypeId)",
+      "confidence": 0.90,
+      "notes": "Time off type ID - requires lookup from vacation_type_001 to integer ID",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.status)",
+      "confidence": 0.90,
+      "notes": "Status mapping - REQUESTED to appropriate BambooHR status",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "start",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.start)",
+      "confidence": 0.95,
+      "notes": "Start date - direct string mapping",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "end",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.end)",
+      "confidence": 0.95,
+      "notes": "End date - direct string mapping",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "target_field": "amount",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.amount)",
+      "confidence": 0.90,
+      "notes": "Amount as integer - requires conversion from float to integer",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "target_field": "dates[0].amount",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.dates[0].amount)",
+      "confidence": 0.85,
+      "notes": "Half-day logic: true = 0.5, false = 1.0 in dates array for start date",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "dates[last].amount",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.dates[last].amount)",
+      "confidence": 0.85,
+      "notes": "Half-day logic: true = 0.5, false = 1.0 in dates array for end date",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "target_field": "implicit_days",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (implicit)",
+      "confidence": 0.95,
+      "notes": "BambooHR implicitly uses days as unit - no explicit field needed",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "notes[0].note",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.notes[0].note)",
+      "confidence": 0.85,
+      "notes": "Employee note mapped to notes array with from field",
+      "mapping_type": "Conversion"
+    }
+  },
+  "unmappable_fields": [],
+  "unmappable_analysis": {},
+  "mapping_summary": {
+    "direct_mappings": 3,
+    "conversion_mappings": 4,
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "mapping_coverage": "100%"
+  },
+  "processing_context": "BambooHR time off request field analysis - optimized with half-day logic using dates array and implicit unit handling",
+  "enhancement_confidence": 0.95,
+  "total_fields_identified": 10
+}

@@ -1,0 +1,160 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /unified/hris/employees/{id}/time_off",
+    "reasoning": "Most relevant endpoint for creating time off requests in Stackone",
+    "required_structure": "Simple flat structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee_id",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.employee_id)",
+      "notes": "Direct semantic match - employee identifier maps to employee_id field",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "type",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.type)",
+      "notes": "Semantic match - absence type maps to TimeOffTypeEnum with multiple leave types",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.status)",
+      "notes": "Direct match - exact name match with TimeOffStatusEnum (approved, pending, rejected, etc.)",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.start_date)",
+      "notes": "Direct match - exact name match with ISO 8601 date-time format",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.end_date)",
+      "notes": "Direct match - exact name match with ISO 8601 date-time format",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.start_half_day)",
+      "notes": "Direct match - exact name match with boolean field for half day start",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.end_half_day)",
+      "notes": "Direct match - exact name match with boolean field for half day end",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.amount)",
+      "notes": "Direct match - exact name match with number field for time off amount",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.unit)",
+      "notes": "Direct match - exact name match with string field for time off unit",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "employee_note",
+      "ground_truth_path": "/unified/hris/employees/{id}/time_off (POST requestBody.employee_note)",
+      "notes": "Direct match - exact name match with string field for employee note",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 10,
+    "unmappable_fields": 0,
+    "mapping_types": {
+      "Direct": 9,
+      "Conversion": 1,
+      "Unmappable": 0
+    },
+    "complexity_analysis": {
+      "simple_mappings": 9,
+      "conversion_mappings": 1,
+      "unmappable_fields": 0
+    },
+    "confidence_scores": {
+      "high_confidence": 10,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 0
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "absence_type_external_id",
+        "from_type": "string",
+        "to_type": "TimeOffTypeEnum",
+        "conversion_method": "Map to TimeOffTypeEnum values (vacation, sick, personal, etc.)"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Map absence_type_external_id to TimeOffTypeEnum values"
+    ],
+    "missing_fields_handling": [
+      "All fields are mappable - no missing fields"
+    ],
+    "validation_requirements": [
+      "All fields are required in API request",
+      "employee_id must be valid employee ID in system",
+      "type must be valid TimeOffTypeEnum value",
+      "status must be valid TimeOffStatusEnum value",
+      "Date fields must be in ISO 8601 format"
+    ],
+    "business_logic_considerations": [
+      "Perfect field mapping with semantic consistency",
+      "All fields must be present for successful request",
+      "No complex transformations required"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/unified/hris/employees/{id}/time_off",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["employee_id", "type", "start_date", "end_date"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 10,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

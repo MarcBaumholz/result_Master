@@ -1,0 +1,110 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_external_id)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - employee ID maps to employee_external_id in Flip API",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "absence_type_external_id",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.absence_type_external_id)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - absence type external id",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.status)",
+      "confidence": 0.95,
+      "notes": "Conversion required: use REQUESTED for pending; API supports REQUESTED/APPROVED",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "start_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_date)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - start_date field in YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "end_date",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_date)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - end_date field in YYYY-MM-DD format",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "start_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.start_half_day)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - boolean field for half-day start",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "target_field": "end_half_day",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.end_half_day)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - boolean field for half-day end",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "target_field": "amount",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.amount)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - numeric amount",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "target_field": "unit",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.unit)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - enum DAYS",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "target_field": "employee_note",
+      "ground_truth_path": "/api/hris/v4/absences (requestBody.employee_note)",
+      "confidence": 1.0,
+      "notes": "Direct mapping - employee note string",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "unmappable_analysis": {},
+  "mapping_summary": {
+    "direct_mappings": 9,
+    "conversion_mappings": 1,
+    "logical_mappings": 0,
+    "unmappable_fields": 0,
+    "mapping_coverage": "100%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/api/hris/v4/absences (POST - Create absence)",
+      "/api/hris/v4/absences (GET - List absences)"
+    ],
+    "schemas_analyzed": [
+      "AbsenceCreation (request body)",
+      "Absence (response body)",
+      "AbsenceStatus (status object)",
+      "AbsenceDurationUnit (unit enum)"
+    ],
+    "half_day_logic": "Explicit boolean fields start_half_day and end_half_day",
+    "status_logic": "Creation supports REQUESTED/APPROVED; map pending→REQUESTED",
+    "unit_logic": "Explicit unit field with DAYS"
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "PersonNumber",
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/absences (AbsenceRecord.PersonNumber)",
+      "notes": "Map Oracle PersonNumber to Flip employee_external_id. PersonNumber is human-readable employee identifier in Oracle HCM.",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "AbsenceTypeId", 
+      "target_field": "absence_type_external_id",
+      "ground_truth_path": "/absences (AbsenceRecord.AbsenceTypeId)",
+      "notes": "Direct mapping of Oracle AbsenceTypeId to Flip absence_type_external_id. This is the canonical external identifier for absence types.",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "Status",
+      "target_field": "status", 
+      "ground_truth_path": "/absences (AbsenceRecord.Status)",
+      "notes": "Map Oracle Status to Flip status. Validate expected values (SUBMITTED, APPROVED) against Flip HRIS status options.",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "StartDate",
+      "target_field": "start_date",
+      "ground_truth_path": "/absences (AbsenceRecord.StartDate)",
+      "notes": "Direct mapping of Oracle StartDate to Flip start_date. Ensure date format alignment (YYYY-MM-DD) with Flip HRIS.",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "EndDate", 
+      "target_field": "end_date",
+      "ground_truth_path": "/absences (AbsenceRecord.EndDate)",
+      "notes": "Map Oracle EndDate to Flip end_date. Note that Oracle may include time; truncate to date if Flip HRIS expects date-only.",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "source_field": "StartTime",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/absences (AbsenceRecord.StartTime)",
+      "notes": "Derive from Oracle StartTime (e.g., map 00:00-12:00 to AM). Not directly available in Oracle AbsenceRecord; requires custom logic.",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "source_field": "EndTime",
+      "target_field": "end_half_day", 
+      "ground_truth_path": "/absences (AbsenceRecord.EndTime)",
+      "notes": "Derive from Oracle EndTime (e.g., map 12:00-17:00 to PM). Similar to start_half_day; requires custom mapping logic.",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "source_field": "Days",
+      "target_field": "amount",
+      "ground_truth_path": "/absences (AbsenceRecord.Days)",
+      "notes": "Map Oracle Days to Flip amount for day-based absences. Use Hours field if Flip HRIS expects hourly units.",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "Days/Hours",
+      "target_field": "unit",
+      "ground_truth_path": "/absences (AbsenceRecord.Days or Hours)",
+      "notes": "Infer unit from Oracle Days/Hours presence. If Days > 0, unit=DAYS; if Hours > 0, unit=HOURS. Not explicitly available in Oracle AbsenceRecord.",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "AbsenceReason",
+      "target_field": "employee_note",
+      "ground_truth_path": "/absences (AbsenceRecord.AbsenceReason)",
+      "notes": "Map Oracle AbsenceReason to Flip employee_note. Prefer AbsenceReason over Description as it contains employee-submitted notes.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "Oracle HCM Absence Management API to Flip HRIS field mapping - Enhanced RAG analysis completed with semantic field matching and business context validation",
+  "total_fields_identified": 10,
+  "mapping_summary": {
+    "direct_mappings": 5,
+    "conversion_mappings": 2, 
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "coverage_percentage": 100
+  },
+  "api_endpoints": {
+    "create_absence": "/absences (POST)",
+    "get_absences": "/absences (GET)",
+    "get_absence_by_id": "/absences/{absencesUniqID} (GET)",
+    "update_absence": "/absences/{absencesUniqID} (PATCH)",
+    "delete_absence": "/absences/{absencesUniqID} (DELETE)",
+    "search_absences": "/absences/action/findByAdvancedSearchQuery (POST)"
+  },
+  "oracle_schema_reference": {
+    "main_schema": "AbsenceRecord",
+    "required_fields": ["PersonId", "AbsenceTypeId", "StartDate", "EndDate"],
+    "optional_fields": ["StartTime", "EndTime", "AbsenceReason", "AbsencePattern", "Days", "Hours", "Status", "Description"],
+    "response_fields": ["AbsenceId", "PersonId", "PersonNumber", "PersonName", "AbsenceTypeId", "AbsenceTypeName", "StartDate", "EndDate", "StartTime", "EndTime", "AbsenceReason", "AbsencePattern", "Days", "Hours", "Status", "Description", "CreatedBy", "CreatedDate", "LastUpdatedBy", "LastUpdatedDate"]
+  }
+}

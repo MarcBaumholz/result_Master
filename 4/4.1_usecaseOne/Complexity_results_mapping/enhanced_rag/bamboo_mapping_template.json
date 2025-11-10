@@ -1,0 +1,120 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employeeId",
+      "ground_truth_path": "/{companyDomain}/v1_1/employees/{employeeId}/time_off/policies (path parameter)",
+      "notes": "Employee ID is passed as path parameter in BambooHR API. Map source employee_external_id to path parameter employeeId. Critical for employee identification in HR systems and payroll processing.",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "policyId",
+      "ground_truth_path": "/{companyDomain}/v1_1/employees/{employeeId}/time_off/policies (requestBody.policyId)",
+      "notes": "BambooHR uses policyId instead of external_id string. Requires validation against available policy list. Determines accrual rules, approval workflows, and compliance requirements.",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/{companyDomain}/v1/time_off/requests (response.status)",
+      "notes": "Status field exists but may be read-only in some endpoints. Check for predefined status values in API responses. Key for managerial oversight and reporting.",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.start)",
+      "notes": "Format as YYYY-MM-DD per API documentation. Required in policy assignment and time off requests. Used for scheduling and coverage planning.",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.end)",
+      "notes": "Format as YYYY-MM-DD. For single-day requests, set equal to start_date. Determines return-to-work date and impacts project timelines.",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "halfDayStart",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.halfDayStart)",
+      "notes": "Expects 'AM' or 'PM' values. Enables partial-day absence tracking for organizations with half-day policies. Affects payroll deductions.",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "halfDayEnd",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.halfDayEnd)",
+      "notes": "Mirror start_half_day formatting. Typically used when end_date is same as start_date for half-day requests. Ensures accurate leave balance adjustments.",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.amount)",
+      "notes": "Often derived from date range but may be explicitly required. Unit field determines interpretation. Directly affects leave balance deductions.",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.unit)",
+      "notes": "Expect predefined values like 'hours', 'days'. Essential for proper leave accounting across different policy types. Validate against API documentation for supported units.",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "note",
+      "ground_truth_path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request (requestBody.note)",
+      "notes": "Free-text field with character limits. Provides context for managers and helps with compliance reporting. Aids in approval decisions.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "BambooHR API v1.1 - Enhanced Time Off Request Management. Primary endpoint: PUT /{companyDomain}/v1_1/employees/{employeeId}/time_off/policies. Uses policy-based approach with enhanced half-day support.",
+  "total_fields_identified": 10,
+  "mapping_complexity": {
+    "direct_mappings": 4,
+    "conversion_mappings": 6,
+    "logical_mappings": 0,
+    "unmappable_fields": 0
+  },
+  "api_endpoints": {
+    "primary": "PUT /{companyDomain}/v1_1/employees/{employeeId}/time_off/policies",
+    "time_off_request": "PUT /{companyDomain}/v1/employees/{employeeId}/time_off/request",
+    "metadata": "GET /{companyDomain}/v1/meta/time_off/types",
+    "policies": "GET /{companyDomain}/v1/meta/time_off/policies"
+  },
+  "special_considerations": [
+    "Employee ID must be resolved from external_id to internal BambooHR employee ID",
+    "Policy ID must be validated against available policy list before submission",
+    "All date fields must use YYYY-MM-DD format consistently",
+    "Half-day fields expect 'AM' or 'PM' values with proper validation",
+    "Status field may be read-only in some endpoints - check API documentation",
+    "Unit field supports predefined values - validate against API constraints",
+    "Employee note has character limits - implement proper validation"
+  ],
+  "version": "2.0",
+  "analysis_date": "2025-09-17",
+  "improvements_over_v1": [
+    "More detailed field descriptions with business context",
+    "Enhanced API endpoint mapping with v1.1 support",
+    "Better understanding of half-day support implementation",
+    "Clearer unit field support (previously marked as unmappable)",
+    "Improved error handling recommendations",
+    "More specific validation requirements"
+  ]
+}

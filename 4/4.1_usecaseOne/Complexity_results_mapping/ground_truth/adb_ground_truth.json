@@ -1,0 +1,120 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "associateOID",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.eventContext.associateOID)",
+      "confidence": 0.95,
+      "notes": "Employee ID mapped to associateOID in ADP",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "leaveTypeCode.codeValue",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue)",
+      "confidence": 0.90,
+      "notes": "Absence type mapped to leaveTypeCode with codeValue",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "status",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].status)",
+      "confidence": 0.85,
+      "notes": "Status available in GET response schema; not settable on create",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "startDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.startDateTime)",
+      "confidence": 0.95,
+      "notes": "Start date mapped to startDateTime in ISO format",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "target_field": "leaveReturn.returnDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveReturn.returnDateTime)",
+      "confidence": 0.95,
+      "notes": "End date mapped to leaveReturn.returnDateTime",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "target_field": "derived",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (derived from startDateTime time component)",
+      "confidence": 0.8,
+      "notes": "Logical: derive from startDateTime time component - if time indicates midday, treat as half day",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "derived",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (derived from leaveReturn.returnDateTime time component)",
+      "confidence": 0.8,
+      "notes": "Logical: derive from returnDateTime time component - if time indicates midday, treat as half day",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "target_field": "days",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].days)",
+      "confidence": 0.85,
+      "notes": "Amount mapped to days field in response schema; not settable on create",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "derived",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (derived from date range)",
+      "confidence": 0.85,
+      "notes": "Logical: ADP uses date-based leave requests; set unit as DAYS",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "target_field": "description",
+      "ground_truth_path": "/hr/v2/workers/{aoid}/leaves (response.leaves[].description)",
+      "confidence": 0.85,
+      "notes": "Employee note mapped to description field in response schema; not settable on create",
+      "mapping_type": "Conversion"
+    }
+  },
+  "unmappable_fields": [],
+  "unmappable_analysis": {},
+  "mapping_summary": {
+    "direct_mappings": 1,
+    "conversion_mappings": 6,
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "mapping_coverage": "100%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/events/hr/v1/worker.leave.absence.request (POST - Create leave request)",
+      "/hr/v2/workers/{aoid}/leaves (GET - Get worker leave details)",
+      "/events/hr/v1/worker.return.request (POST - Return from leave)"
+    ],
+    "schemas_analyzed": [
+      "LeaveAbsence (request body for leave creation)",
+      "Leave (response schema for leave details)",
+      "LeaveReturn (return request schema)"
+    ],
+    "hidden_fields_found": [
+      "status field (in response schema)",
+      "days field (in response schema)",
+      "description field (in response schema)",
+      "returnStatus.returnStatusCode.codeValue (in return request)"
+    ],
+    "half_day_logic": "Derive from DateTime time components",
+    "status_logic": "Status available in response but not settable on create",
+    "unit_logic": "ADP uses date-based leave requests; unit is DAYS",
+    "amount_logic": "Days field available in response schema"
+  },
+  "processing_context": "ADP Enterprise HR Leave of Absence API - uses event-based architecture with structured leave requests",
+  "enhancement_confidence": 0.95,
+  "total_fields_identified": 10
+}

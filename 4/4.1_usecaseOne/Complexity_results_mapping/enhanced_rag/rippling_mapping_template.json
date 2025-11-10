@@ -1,0 +1,107 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "worker_id",
+      "ground_truth_path": "/custom-objects/{custom_object_api_name}/records/external_id/{external_id}/",
+      "notes": "Direct mapping - Rippling uses worker_id as primary employee identifier. Validate via custom objects endpoint to ensure existence before mapping.",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id", 
+      "target_field": "leave_type_id",
+      "ground_truth_path": "LeaveRequest.leave_type_id or LeaveBalance.leave_type_id",
+      "notes": "Direct mapping - Rippling uses leave_type_id for absence/leave type identification. Match to Flip's absence type ID using external_id reference.",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status", 
+      "ground_truth_path": "LeaveRequest.status (enumerated values)",
+      "notes": "Conversion mapping - Map to Flip's status field using standardized values. Rippling may use custom statuses - validate allowed values first.",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "LeaveRequest.start_date (ISO 8601 format)",
+      "notes": "Direct mapping - Ensure date format consistency (YYYY-MM-DD). Used for conflict detection and calendar management.",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date", 
+      "ground_truth_path": "LeaveRequest.end_date (ISO 8601 format)",
+      "notes": "Direct mapping - Mirror start_date formatting. Validate that end_date is not before start_date in mapping logic.",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "start_time",
+      "ground_truth_path": "LeaveRequest.start_time (time format)",
+      "notes": "Conversion mapping - Convert boolean to time format (true = '12:00', false = '09:00'). If Flip uses text (AM/PM), convert Rippling's boolean appropriately.",
+      "mapping_type": "Conversion"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "end_time",
+      "ground_truth_path": "LeaveRequest.end_time (time format)", 
+      "notes": "Conversion mapping - Convert boolean to time format (true = '12:00', false = '17:00'). Ensure both half-day fields are mapped consistently.",
+      "mapping_type": "Conversion"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "number_of_minutes_requested",
+      "ground_truth_path": "LeaveRequest.number_of_minutes_requested (number)",
+      "notes": "Conversion mapping - Map to Flip's amount field. Note unit compatibility - ensure unit field aligns (hours vs days). Key for balance deductions and accrual tracking.",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "number_of_minutes_requested",
+      "ground_truth_path": "LeaveRequest.number_of_minutes_requested (always in minutes)",
+      "notes": "Logical mapping - Align with Flip's supported units. Convert if necessary (e.g., Rippling uses 'days' but Flip expects 'hours'). Ensure unit and amount combinations are mathematically consistent.",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "comments",
+      "ground_truth_path": "LeaveRequest.comments (string) or LeaveRequest.reason_for_leave",
+      "notes": "Direct mapping - Map directly to Flip's note or comments field. Truncate if length limits differ between systems. Aids in approval decisions and provides audit trails.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "Rippling Platform API v1.0.0 - Leave/Absence Management Integration with Flip HRIS",
+  "mapping_summary": {
+    "total_fields_identified": 10,
+    "direct_mappings": 5,
+    "conversion_mappings": 4, 
+    "logical_mappings": 1,
+    "unmappable_fields": 0,
+    "complexity_level": "Moderate",
+    "implementation_notes": [
+      "Validate all external_id fields via Rippling's /custom-objects/ endpoints before mapping",
+      "Use webhooks or sync checks to handle status changes post-mapping", 
+      "Test date and half-day fields with edge cases (cross-timezone requests)",
+      "Ensure unit and amount combinations are mathematically consistent",
+      "Rippling uses worker_id instead of employee_id for employee identification",
+      "Leave types are identified by leave_type_id in Rippling",
+      "Time fields require boolean to time conversion for half-day handling",
+      "Amount and unit must be converted to minutes (Rippling's base unit)",
+      "Status values need enum mapping to Rippling's custom status values"
+    ]
+  }
+}

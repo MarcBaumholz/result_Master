@@ -1,0 +1,136 @@
+{
+  "mapping_metadata": {
+    "source_system": "Personio",
+    "target_system": "Flip HRIS Shift Planning",
+    "mapping_version": "2.0",
+    "created_date": "2024-12-19",
+    "analysis_method": "Ground Truth Validation",
+    "confidence_score": 0.92,
+    "field_coverage": "10/17 fields mapped (based on actual API)",
+    "note": "Personio supports attendance periods, not full shift planning"
+  },
+  "fields": {
+    "employee_id": {
+      "source_field": "employee",
+      "source_type": "integer",
+      "target_field": "employee_id",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.95,
+      "notes": "Convert integer employee ID to string"
+    },
+    "attendance_id": {
+      "source_field": "id",
+      "source_type": "integer",
+      "target_field": "shift_id",
+      "target_type": "string",
+      "mapping_type": "transform",
+      "confidence": 0.95,
+      "notes": "Use attendance period ID as shift identifier"
+    },
+    "date": {
+      "source_field": "date",
+      "source_type": "string",
+      "target_field": "date",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Date of attendance period"
+    },
+    "start_time": {
+      "source_field": "start_time",
+      "source_type": "string",
+      "target_field": "clock_in_time",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Start time of attendance period"
+    },
+    "end_time": {
+      "source_field": "end_time",
+      "source_type": "string",
+      "target_field": "clock_out_time",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "End time of attendance period"
+    },
+    "break_duration": {
+      "source_field": "break",
+      "source_type": "integer",
+      "target_field": "break_duration_minutes",
+      "target_type": "integer",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Break duration in minutes"
+    },
+    "notes": {
+      "source_field": "comment",
+      "source_type": "string",
+      "target_field": "notes",
+      "target_type": "string",
+      "mapping_type": "direct",
+      "confidence": 0.9,
+      "notes": "Attendance period comments"
+    },
+    "is_holiday": {
+      "source_field": "is_holiday",
+      "source_type": "boolean",
+      "target_field": "is_holiday",
+      "target_type": "boolean",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Whether attendance is on holiday"
+    },
+    "is_time_off": {
+      "source_field": "is_on_time_off",
+      "source_type": "boolean",
+      "target_field": "is_time_off",
+      "target_type": "boolean",
+      "mapping_type": "direct",
+      "confidence": 0.95,
+      "notes": "Whether attendance is during time off"
+    },
+    "updated_at": {
+      "source_field": "updated_at",
+      "source_type": "string",
+      "target_field": "updated_at",
+      "target_type": "datetime",
+      "mapping_type": "transform",
+      "confidence": 0.9,
+      "notes": "Last update timestamp"
+    }
+  },
+  "mapped_fields": {
+    "personio": {
+      "employee_id": "employee",
+      "shift_id": "id",
+      "date": "date",
+      "clock_in_time": "start_time",
+      "clock_out_time": "end_time",
+      "break_duration_minutes": "break",
+      "notes": "comment",
+      "is_holiday": "is_holiday",
+      "is_time_off": "is_on_time_off",
+      "updated_at": "updated_at"
+    }
+  },
+  "unmapped_fields": {
+    "reason": "Personio API supports attendance periods, not comprehensive shift planning",
+    "missing_fields": [
+      "hours_worked",
+      "overtime_hours",
+      "regular_hours",
+      "work_schedule_type",
+      "employment_type",
+      "start_date",
+      "end_date",
+      "active",
+      "status",
+      "department",
+      "break_start",
+      "break_end"
+    ],
+    "recommendation": "Calculate hours_worked from start_time and end_time, use attendance as shift proxy"
+  }
+}

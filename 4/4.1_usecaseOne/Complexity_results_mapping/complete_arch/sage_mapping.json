@@ -1,0 +1,113 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_id",
+      "target_field": "employee_external_id",
+      "ground_truth_path": "/leave-management/requests (formData.employee_id)",
+      "notes": "Sage uses integer employee_id, Flip expects string external_id. Requires type conversion from integer to string.",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "time_off_policy_id",
+      "target_field": "absence_type_external_id",
+      "ground_truth_path": "/leave-management/requests (formData.time_off_policy_id)",
+      "notes": "Sage uses integer policy_id, Flip expects string external_id. Requires type conversion from integer to string.",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/leave-management/requests (response.data.status)",
+      "notes": "Sage uses string statuses (Approved, Pending, etc.), Flip uses enum values (REQUESTED, APPROVED, DECLINED, CANCELLED, UNKNOWN). Requires status mapping logic.",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "source_field": "date OR date_from",
+      "target_field": "start_date",
+      "ground_truth_path": "/leave-management/requests (formData.date for single-day OR formData.date_from for multi-day)",
+      "notes": "Sage has different fields for single vs multi-day requests. For single-day: use 'date' field. For multi-day: use 'date_from' field. Requires conditional logic based on request type.",
+      "mapping_type": "Logical"
+    },
+    "end_date": {
+      "source_field": "date OR date_to",
+      "target_field": "end_date",
+      "ground_truth_path": "/leave-management/requests (formData.date for single-day OR formData.date_to for multi-day)",
+      "notes": "Sage has different fields for single vs multi-day requests. For single-day: use 'date' field. For multi-day: use 'date_to' field. Requires conditional logic based on request type.",
+      "mapping_type": "Logical"
+    },
+    "start_half_day": {
+      "source_field": "first_part_of_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/leave-management/requests (response.data.first_part_of_day)",
+      "notes": "Sage uses boolean first_part_of_day field. Maps directly to Flip start_half_day boolean. Only relevant when part_of_day is not 'all_day'.",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "second_part_of_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/leave-management/requests (response.data.second_part_of_day)",
+      "notes": "Sage uses boolean second_part_of_day field. Maps directly to Flip end_half_day boolean. Only relevant when part_of_day is not 'all_day'.",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "hours OR calculated from dates",
+      "target_field": "amount",
+      "ground_truth_path": "/leave-management/requests (formData.hours for partial days OR calculated from date range)",
+      "notes": "Sage uses hours for partial days, Flip uses days. Requires conversion logic: if hours provided, convert to days based on policy unit. If full days, calculate from date range.",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "source_field": "policy.unit",
+      "target_field": "unit",
+      "ground_truth_path": "/leave-management/policies (response.data.unit)",
+      "notes": "Sage policy unit (days) maps to Flip unit enum (DAYS). Requires lookup from policy data based on time_off_policy_id.",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "details",
+      "target_field": "employee_note",
+      "ground_truth_path": "/leave-management/requests (formData.details)",
+      "notes": "Direct mapping from Sage details field to Flip employee_note field. Both are optional string fields.",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [],
+  "processing_context": "Sage HR API leave management system with comprehensive absence management capabilities. Supports single-day and multi-day requests with partial day support.",
+  "total_fields_identified": 10,
+  "mapping_summary": {
+    "direct_mappings": 3,
+    "conversion_mappings": 4,
+    "logical_mappings": 3,
+    "unmappable_fields": 0,
+    "coverage_percentage": 100
+  },
+  "implementation_notes": {
+    "critical_mappings": [
+      "status - requires string to enum conversion logic",
+      "start_date/end_date - requires conditional field selection based on request type",
+      "start_half_day/end_half_day - requires boolean field mapping"
+    ],
+    "data_conversions": [
+      "employee_id: integer → string",
+      "time_off_policy_id: integer → string", 
+      "status: string → enum",
+      "hours: number → days (based on policy unit)"
+    ],
+    "conditional_logic": [
+      "Date fields: use 'date' for single-day, 'date_from'/'date_to' for multi-day",
+      "Amount calculation: use 'hours' for partial days, calculate from dates for full days"
+    ]
+  }
+}

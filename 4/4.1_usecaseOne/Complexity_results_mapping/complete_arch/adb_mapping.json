@@ -1,0 +1,91 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "data.eventContext.associateOID",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.eventContext.associateOID)",
+      "notes": "Direct: Flip employee_external_id maps to ADP associateOID (employee id).",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue)",
+      "notes": "Direct: external absence type code maps to ADP leaveTypeCode.codeValue.",
+      "mapping_type": "Direct"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no status field in create payload; status managed by ADP workflow)",
+      "notes": "Logical: Status exists in response schemas but not in create request. ADP manages status through internal workflow.",
+      "mapping_type": "Logical"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "data.transform.workerLeave.leaveAbsence.startDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.startDateTime)",
+      "notes": "Conversion: Flip date (YYYY-MM-DD) to ADP date-time (ISO 8601).",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "data.transform.workerLeave.leaveAbsence.leaveReturn.returnDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveReturn.returnDateTime)",
+      "notes": "Conversion: Flip date (YYYY-MM-DD) to ADP date-time for returnDateTime.",
+      "mapping_type": "Conversion"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no explicit half-day field)",
+      "notes": "Logical: Represent half-day by setting startDateTime time component (e.g., 12:00) if policy allows.",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no explicit half-day field)",
+      "notes": "Logical: Represent half-day by setting returnDateTime time component (e.g., 12:00) if policy allows.",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no direct amount field)",
+      "notes": "Logical: Duration implied by startDateTime→returnDateTime; compute from dates if needed.",
+      "mapping_type": "Logical"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no direct unit field)",
+      "notes": "Logical: Unit derives from calculation rules; API expects concrete date-times rather than unit.",
+      "mapping_type": "Logical"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": null,
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (no description/comment in create payload)",
+      "notes": "Unmappable: Description exists in response schemas but not in create request body.",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "unmappable_fields": [
+    "employee_note"
+  ],
+  "processing_context": "Mapping Flip AbsenceCreation to ADP Leave Absence Request (POST /events/hr/v1/worker.leave.absence.request). Status field exists in response schemas but not in create request - managed by ADP workflow.",
+  "total_fields_identified": 10
+}

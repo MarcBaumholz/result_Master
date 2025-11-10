@@ -1,0 +1,187 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /workers/{ID}/timeOffEntries",
+    "reasoning": "Most relevant endpoint for creating time off entries in Workday",
+    "required_structure": "Complex nested structure with employee and timeOff objects"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "employee.id",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.employee.id)",
+      "notes": "Maps to the employee reference object's ID field, which represents the worker requesting time off. Requires resolution from external employee ID to Workday worker ID.",
+      "mapping_type": "Semantic Match"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "timeOff.id",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.timeOff.id)",
+      "notes": "Maps to the Time Off plan ID, which represents the type of absence/time off. Requires resolution from external absence type ID to Workday time off plan ID.",
+      "mapping_type": "Semantic Match"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "timeOffRequest.status",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.timeOffRequest.status)",
+      "notes": "Maps to the status of the time off request business process. Represents the current state of the absence request.",
+      "mapping_type": "Semantic Match"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "date",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.date)",
+      "notes": "Direct mapping to the date field for the time off entry. Workday uses single-date entries, not date ranges.",
+      "mapping_type": "Direct Match"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Workday uses single-date entries, not date ranges",
+      "notes": "Workday API uses single-date entries rather than date ranges. End date would need to be handled by creating multiple entries or using a different approach.",
+      "mapping_type": "Unmappable"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "Workday API doesn't support half-day concept in the time off entry structure",
+      "mapping_type": "Unmappable"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "Workday API doesn't support half-day concept in the time off entry structure",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "units",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.units)",
+      "notes": "Maps to the units field which represents the amount of time off requested. May require data type conversion from number to integer.",
+      "mapping_type": "Semantic Match"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "Workday API doesn't track units separately - uses units field for amount",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "Workday API doesn't accept employee notes in the time off entry structure",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 5,
+    "unmappable_fields": 5,
+    "mapping_types": {
+      "Direct Match": 1,
+      "Semantic Match": 4,
+      "Unmappable": 5
+    },
+    "complexity_analysis": {
+      "simple_mappings": 1,
+      "conversion_mappings": 4,
+      "unmappable_fields": 5
+    },
+    "confidence_scores": {
+      "high_confidence": 5,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 5
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "employee_external_id",
+        "from_type": "string",
+        "to_type": "string",
+        "conversion_method": "Resolve external employee ID to Workday worker ID"
+      },
+      {
+        "field": "absence_type_external_id",
+        "from_type": "string",
+        "to_type": "string",
+        "conversion_method": "Resolve external absence type ID to Workday time off plan ID"
+      },
+      {
+        "field": "amount",
+        "from_type": "number",
+        "to_type": "integer",
+        "conversion_method": "Convert to integer for units field"
+      }
+    ],
+    "nested_structure_requirements": [
+      {
+        "field": "employee_external_id",
+        "structure": "Must be wrapped in employee object with id property"
+      },
+      {
+        "field": "absence_type_external_id",
+        "structure": "Must be wrapped in timeOff object with id property"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Resolve external employee ID to Workday worker ID",
+      "Resolve external absence type ID to Workday time off plan ID",
+      "Convert amount to integer for units field"
+    ],
+    "missing_fields_handling": [
+      "end_date: Create multiple single-date entries for date ranges",
+      "half_day fields: Convert to full day logic or handle separately",
+      "unit: Use units field for amount calculations",
+      "employee_note: Store elsewhere or find alternative field"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "employee.id must be valid Workday worker ID",
+      "timeOff.id must be valid Workday time off plan ID",
+      "Date field must be in proper format"
+    ],
+    "business_logic_considerations": [
+      "API requires complex nested structure with employee and timeOff objects",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness",
+      "May need to create multiple entries for date ranges"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/workers/{ID}/timeOffEntries",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["employee", "timeOff", "date", "units"],
+      "nested_levels": 2,
+      "complexity": "Medium - requires nested objects"
+    },
+    "field_requirements": {
+      "required_fields": 5,
+      "optional_fields": 0,
+      "nested_objects": 2
+    }
+  }
+}
+

@@ -1,0 +1,734 @@
+---
+description: "Phase 3 Kotlin Code Generation Rules - Comprehensive coding standards for Controller/Service/Mapper architecture, security, logging, null-safety, and TDD testing. Based on production learnings and KISS principles."
+alwaysApply: false
+---
+# 🚀 Phase 3 Kotlin Code Generation Rules
+
+## 📚 Overview
+These rules define the coding standards, architecture patterns, and quality requirements for Phase 3 Kotlin mapper code generation. Based on production learnings and KISS (Keep It Simple, Stupid) principles.
+
+---
+
+## 🎯 Core Principles
+
+### 🔑 Golden Rules
+1. **KISS Principle**: Write only what is necessary - less but well explained
+2. **Single Responsibility**: Each class has one clear purpose
+3. **TDD First**: Write tests before implementation
+4. **Production Ready**: No mock data, proper error handling, security
+5. **Clean Code**: Senior developer mindset, readable and maintainable
+6. **Null Safety**: Use Kotlin's null-safety features properly
+7. **Security First**: Always secure endpoints and validate inputs
+
+### 📋 Architecture Requirements
+- **Single File Pattern**: Controller + Service + Mapper in one file (≤200 lines)
+- **Layered Architecture**: Clear separation of concerns
+- **Dependency Injection**: Use Micronaut's DI container
+- **Interface Segregation**: Small, focused interfaces
+
+---
+
+## 🏗️ Architecture Patterns
+
+### Controller Layer
+```kotlin
+@Controller("/api/resource")
+@Secured(SecurityRule.IS_AUTHENTICATED)
+class ResourceController(private val service: ResourceService) {
+    
+    private val log = LoggerFactory.getLogger(ResourceController::class.java)
+    
+    @Get("/me")
+    fun getForMe(auth: Authentication): HttpResponse<Any> {
+        return try {
+            val email = (auth.attributes["email"] as? String) ?: auth.name
+            val result = service.getResourcesByEmail(email)
+            HttpResponse.ok(result)
+        } catch (ex: Throwable) {
+            log.error("Controller error", ex)
+            HttpResponse.serverError()
+        }
+    }
+}
+```
+
+**Controller Rules:**
+- ✅ Always use `@Controller` with path prefix
+- ✅ Always use `@Secured(SecurityRule.IS_AUTHENTICATED)`
+- ✅ Always inject service via constructor
+- ✅ Always use SLF4J logger
+- ✅ Always handle errors with try/catch
+- ✅ Always return `HttpResponse` types
+- ✅ Always use `/me` endpoint pattern for user-specific data
+- ✅ Always extract email from `Authentication` object
+
+### Service Layer
+```kotlin
+@Singleton
+class ResourceService(private val facadeClient: FacadeClient) {
+    
+    private val log = LoggerFactory.getLogger(ResourceService::class.java)
+    
+    fun getResourcesByEmail(email: String): Any {
+        return try {
+            val dto = facadeClient.fetchByEmail(email)
+            Mapper.mapToTarget(dto)
+        } catch (ex: Throwable) {
+            log.error("Service error", ex)
+            throw RuntimeException("Failed to fetch resources")
+        }
+    }
+}
+```
+
+**Service Rules:**
+- ✅ Always use `@Singleton` annotation
+- ✅ Always inject dependencies via constructor
+- ✅ Always use SLF4J logger
+- ✅ Always handle errors with try/catch
+- ✅ Always rethrow with concise error message
+- ✅ Always delegate to Mapper for transformations
+- ✅ Never return null - use proper error handling
+
+### Mapper Layer
+```kotlin
+object Mapper {
+    fun mapToTarget(source: SourceDTO): TargetDTO = TargetDTO(
+        // Direct mappings
+        id = source.id,
+        email = source.email ?: "",
+        
+        // Type conversions
+        startDate = source.startDate?.toLocalDate(),
+        
+        // Enum mappings
+        status = when (source.status) {
+            "active" -> Status.ACTIVE
+            "inactive" -> Status.INACTIVE
+            else -> Status.UNKNOWN
+        },
+        
+        // Complex logic
+        fullName = "${source.firstName} ${source.lastName}".trim(),
+        
+        // Unmapped fields
+        endDate = TODO("Calculate end date based on business rules")
+    )
+}
+```
+
+**Mapper Rules:**
+- ✅ Always use `object` for stateless mappers
+- ✅ Always use null-safe operators (`?.`, `?:`)
+- ✅ Always provide default values for nullable fields
+- ✅ Always use `when` expressions for enum mappings
+- ✅ Always include `else` branch in `when` expressions
+- ✅ Always use `TODO()` for unmapped fields with explanation
+- ✅ Never use `!!` operator - use safe calls instead
+- ✅ Always handle null values gracefully
+
+---
+
+## 🔒 Security & Authentication
+
+### Security Annotations
+```kotlin
+@Secured(SecurityRule.IS_AUTHENTICATED)  // Required for all endpoints
+@Secured(SecurityRule.IS_ANONYMOUS)      // Only for public endpoints
+@Secured("ROLE_ADMIN")                   // For admin-only endpoints
+```
+
+### Authentication Handling
+```kotlin
+fun getForMe(auth: Authentication): HttpResponse<Any> {
+    val email = (auth.attributes["email"] as? String) ?: auth.name
+    // Use email for user-specific operations
+}
+```
+
+**Security Rules:**
+- ✅ Always secure endpoints with `@Secured`
+- ✅ Always extract user identity from `Authentication`
+- ✅ Always validate user permissions before operations
+- ✅ Never expose sensitive data in responses
+- ✅ Always use HTTPS in production
+- ✅ Always validate input parameters
+
+---
+
+## 📝 Logging Standards
+
+### Logger Setup
+```kotlin
+private val log = LoggerFactory.getLogger(ClassName::class.java)
+```
+
+### Logging Patterns
+```kotlin
+// Entry logging
+log.info("Processing request for user: {}", email)
+
+// Error logging
+log.error("Failed to process request for user: {}", email, ex)
+
+// Debug logging
+log.debug("Mapped {} fields successfully", fieldCount)
+```
+
+**Logging Rules:**
+- ✅ Always use SLF4J logger
+- ✅ Always log entry points with context
+- ✅ Always log errors with full stack trace
+- ✅ Always use parameterized logging (no string concatenation)
+- ✅ Never log sensitive data (passwords, tokens)
+- ✅ Always include user context in logs
+
+---
+
+## 🛡️ Error Handling & Null Safety
+
+### Null Safety Patterns
+```kotlin
+// Safe calls with defaults
+val email = source.email ?: "unknown@example.com"
+
+// Safe calls with error handling
+val date = source.startDate?.toLocalDate() 
+    ?: throw IllegalArgumentException("Start date is required")
+
+// Safe calls with fallback
+val status = source.status?.let { Status.valueOf(it) } ?: Status.UNKNOWN
+```
+
+### Error Handling Patterns
+```kotlin
+// Controller error handling
+return try {
+    val result = service.processData(data)
+    HttpResponse.ok(result)
+} catch (ex: ValidationException) {
+    log.warn("Validation failed: {}", ex.message)
+    HttpResponse.badRequest(mapOf("error" to ex.message))
+} catch (ex: Throwable) {
+    log.error("Unexpected error", ex)
+    HttpResponse.serverError()
+}
+
+// Service error handling
+fun processData(data: String): Result {
+    return try {
+        // Processing logic
+        Result.success(processedData)
+    } catch (ex: ExternalServiceException) {
+        log.error("External service failed", ex)
+        throw ServiceException("Failed to process data", ex)
+    }
+}
+```
+
+**Error Handling Rules:**
+- ✅ Always use try/catch in Controller and Service
+- ✅ Always provide meaningful error messages
+- ✅ Always log errors with context
+- ✅ Always use appropriate HTTP status codes
+- ✅ Never expose internal implementation details
+- ✅ Always handle null values safely
+- ✅ Never use `!!` operator - use safe calls instead
+
+---
+
+## 🧪 Testing Requirements (TDD)
+
+### Test Structure
+```kotlin
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ResourceControllerTest {
+    
+    @MockBean(FacadeClient::class)
+    lateinit var facadeClient: FacadeClient
+    
+    @Inject
+    lateinit var controller: ResourceController
+    
+    @BeforeEach
+    fun setup() {
+        // Setup test data
+    }
+    
+    @Test
+    fun `should return user resources successfully`() {
+        // Given
+        val email = "test@example.com"
+        val auth = createMockAuth(email)
+        val expectedData = createMockData()
+        
+        // When
+        val result = controller.getForMe(auth)
+        
+        // Then
+        assertThat(result.status).isEqualTo(HttpStatus.OK)
+        assertThat(result.body).isNotNull()
+    }
+    
+    @Test
+    fun `should handle service errors gracefully`() {
+        // Given
+        val email = "test@example.com"
+        val auth = createMockAuth(email)
+        whenever(facadeClient.fetchByEmail(email)).thenThrow(RuntimeException("Service error"))
+        
+        // When
+        val result = controller.getForMe(auth)
+        
+        // Then
+        assertThat(result.status).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+}
+```
+
+### Mapper Tests
+```kotlin
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class MapperTest {
+    
+    @Test
+    fun `should map source to target successfully`() {
+        // Given
+        val source = SourceDTO(
+            id = "123",
+            email = "test@example.com",
+            firstName = "John",
+            lastName = "Doe"
+        )
+        
+        // When
+        val result = Mapper.mapToTarget(source)
+        
+        // Then
+        assertThat(result.id).isEqualTo("123")
+        assertThat(result.email).isEqualTo("test@example.com")
+        assertThat(result.fullName).isEqualTo("John Doe")
+    }
+    
+    @Test
+    fun `should handle null values safely`() {
+        // Given
+        val source = SourceDTO(
+            id = "123",
+            email = null,
+            firstName = "John",
+            lastName = null
+        )
+        
+        // When
+        val result = Mapper.mapToTarget(source)
+        
+        // Then
+        assertThat(result.email).isEqualTo("")
+        assertThat(result.fullName).isEqualTo("John")
+    }
+}
+```
+
+**Testing Rules:**
+- ✅ Always write tests before implementation (TDD)
+- ✅ Always test happy path and error scenarios
+- ✅ Always test null safety and edge cases
+- ✅ Always use descriptive test names
+- ✅ Always use Given-When-Then structure
+- ✅ Always mock external dependencies
+- ✅ Always achieve 100% test coverage for mappers
+- ✅ Always test security constraints
+
+---
+
+## 📊 Quality Gates & Verification
+
+### Code Quality Checklist
+- [ ] **Architecture**: Controller/Service/Mapper pattern followed
+- [ ] **Security**: All endpoints secured with `@Secured`
+- [ ] **Logging**: SLF4J logger used throughout
+- [ ] **Error Handling**: Try/catch in Controller and Service
+- [ ] **Null Safety**: No `!!` operators, safe calls used
+- [ ] **Enum Mapping**: `when` expressions with `else` branch
+- [ ] **Unmapped Fields**: `TODO()` comments with explanations
+- [ ] **Testing**: TDD tests written and passing
+- [ ] **Documentation**: Header comment with verified endpoints
+- [ ] **File Size**: Single file ≤200 lines
+
+### Verification Criteria
+```kotlin
+/**
+ * Verified Endpoint(s):
+ * - POST /api/timeOffEntries
+ * Fields: id, employeeId, startDate, endDate, status, type
+ */
+```
+
+**Verification Rules:**
+- ✅ Always include header comment with verified endpoints
+- ✅ Always list mapped fields in header comment
+- ✅ Always verify endpoints exist in API specification
+- ✅ Always document unmapped fields with TODO
+- ✅ Always ensure all tests pass
+- ✅ Always verify security annotations are present
+
+---
+
+## 🔧 Code Generation Patterns
+
+### Field Mapping Patterns
+```kotlin
+// Direct mapping
+id = source.id,
+
+// Null-safe mapping with default
+email = source.email ?: "",
+
+// Type conversion
+startDate = source.startDate?.toLocalDate(),
+
+// Enum mapping
+status = when (source.status) {
+    "active" -> Status.ACTIVE
+    "inactive" -> Status.INACTIVE
+    else -> Status.UNKNOWN
+},
+
+// Complex logic
+fullName = "${source.firstName} ${source.lastName}".trim(),
+
+// Unmapped field
+endDate = TODO("Calculate based on startDate + duration")
+```
+
+### Function Generation Patterns
+```kotlin
+// Type conversion functions
+private fun String.toLocalDate(): LocalDate = LocalDate.parse(this)
+
+// Enum conversion functions
+private fun String.toStatus(): Status = when (this) {
+    "active" -> Status.ACTIVE
+    "inactive" -> Status.INACTIVE
+    else -> Status.UNKNOWN
+}
+
+// Complex business logic
+private fun calculateFullName(firstName: String?, lastName: String?): String {
+    return "${firstName ?: ""} ${lastName ?: ""}".trim()
+}
+```
+
+---
+
+## 📋 Template Structure
+
+### Required Imports
+```kotlin
+import io.micronaut.http.*
+import io.micronaut.http.annotation.*
+import io.micronaut.security.annotation.*
+import io.micronaut.security.rules.SecurityRule
+import jakarta.inject.Singleton
+import org.slf4j.LoggerFactory
+import io.micronaut.security.authentication.Authentication
+```
+
+### Required Annotations
+```kotlin
+@Controller("/api/resource")
+@Secured(SecurityRule.IS_AUTHENTICATED)
+@Singleton
+```
+
+### Required Error Handling
+```kotlin
+return try {
+    // Business logic
+    HttpResponse.ok(result)
+} catch (ex: Throwable) {
+    log.error("Error message", ex)
+    HttpResponse.serverError()
+}
+```
+
+---
+
+## 🚨 Common Anti-Patterns to Avoid
+
+### ❌ Don't Do This
+```kotlin
+// Unsafe null handling
+val email = source.email!!  // ❌ Never use !!
+
+// Missing error handling
+fun getData(): String = service.fetchData()  // ❌ No error handling
+
+// Missing security
+@Get("/data")
+fun getData(): String = "data"  // ❌ No @Secured
+
+// Missing logging
+fun processData(data: String) {
+    // No logging
+    service.process(data)
+}
+
+// Unsafe enum mapping
+status = Status.valueOf(source.status)  // ❌ Can throw exception
+```
+
+### ✅ Do This Instead
+```kotlin
+// Safe null handling
+val email = source.email ?: "unknown@example.com"
+
+// Proper error handling
+fun getData(): HttpResponse<String> = try {
+    val data = service.fetchData()
+    HttpResponse.ok(data)
+} catch (ex: Throwable) {
+    log.error("Failed to fetch data", ex)
+    HttpResponse.serverError()
+}
+
+// Proper security
+@Get("/data")
+@Secured(SecurityRule.IS_AUTHENTICATED)
+fun getData(): HttpResponse<String> = // ...
+
+// Proper logging
+fun processData(data: String) {
+    log.info("Processing data: {}", data)
+    service.process(data)
+}
+
+// Safe enum mapping
+status = when (source.status) {
+    "active" -> Status.ACTIVE
+    "inactive" -> Status.INACTIVE
+    else -> Status.UNKNOWN
+}
+```
+
+---
+
+## 📈 Performance Considerations
+
+### Lazy Loading
+```kotlin
+// Use lazy initialization for expensive operations
+private val expensiveResource by lazy {
+    createExpensiveResource()
+}
+```
+
+### Caching
+```kotlin
+// Cache frequently accessed data
+@Singleton
+class CachedService {
+    private val cache = ConcurrentHashMap<String, Any>()
+    
+    fun getCachedData(key: String): Any {
+        return cache.computeIfAbsent(key) { fetchData(key) }
+    }
+}
+```
+
+### Memory Management
+```kotlin
+// Use appropriate data structures
+private val smallMap = HashMap<String, String>()  // For small collections
+private val largeMap = ConcurrentHashMap<String, Any>()  // For large collections
+```
+
+---
+
+## 🔄 Integration Patterns
+
+### External Service Integration
+```kotlin
+interface ExternalServiceClient {
+    fun fetchData(id: String): ExternalData
+}
+
+@Singleton
+class ExternalServiceClientImpl : ExternalServiceClient {
+    private val log = LoggerFactory.getLogger(ExternalServiceClientImpl::class.java)
+    
+    override fun fetchData(id: String): ExternalData {
+        return try {
+            // HTTP call to external service
+            httpClient.get("/api/data/$id")
+        } catch (ex: Exception) {
+            log.error("Failed to fetch data for id: {}", id, ex)
+            throw ServiceException("External service unavailable", ex)
+        }
+    }
+}
+```
+
+### Database Integration
+```kotlin
+@Singleton
+class DatabaseService(private val repository: DataRepository) {
+    
+    fun saveData(data: Data): Data {
+        return try {
+            repository.save(data)
+        } catch (ex: Exception) {
+            log.error("Failed to save data", ex)
+            throw ServiceException("Database operation failed", ex)
+        }
+    }
+}
+```
+
+---
+
+## 📚 Documentation Standards
+
+### Code Documentation
+```kotlin
+/**
+ * Maps source data to target format.
+ * 
+ * @param source The source data object
+ * @return Mapped target object
+ * @throws IllegalArgumentException if source is null
+ */
+fun mapToTarget(source: SourceDTO): TargetDTO {
+    // Implementation
+}
+```
+
+### API Documentation
+```kotlin
+/**
+ * Retrieves user-specific resources.
+ * 
+ * @param auth The authenticated user context
+ * @return HTTP response with user resources
+ */
+@Get("/me")
+fun getForMe(auth: Authentication): HttpResponse<Any> {
+    // Implementation
+}
+```
+
+---
+
+## 🎯 Success Metrics
+
+### Code Quality Metrics
+- **Test Coverage**: ≥95% for mappers, ≥80% overall
+- **Cyclomatic Complexity**: ≤10 per method
+- **File Size**: ≤200 lines per file
+- **Null Safety**: 0 `!!` operators
+- **Security**: 100% endpoints secured
+
+### Performance Metrics
+- **Response Time**: ≤100ms for simple operations
+- **Memory Usage**: ≤50MB per request
+- **Error Rate**: ≤1% for production endpoints
+
+### Maintainability Metrics
+- **Code Duplication**: ≤5%
+- **Method Length**: ≤20 lines
+- **Class Length**: ≤200 lines
+- **Documentation**: 100% public methods documented
+
+---
+
+## 🔧 Tool Integration
+
+### Phase 3 Tool Usage
+```json
+{
+  "tool": "phase3_generate_mapper",
+  "arguments": {
+    "mapping_report_path": "/path/to/mapping_report.md",
+    "output_directory": "/path/to/outputs/phase3"
+  }
+}
+```
+
+### Quality Verification
+```json
+{
+  "tool": "phase3_quality_suite",
+  "arguments": {
+    "kotlin_file_path": "/path/to/generated_mapper.kt",
+    "mapping_report_path": "/path/to/mapping_report.md"
+  }
+}
+```
+
+### TDD Validation
+```json
+{
+  "tool": "phase4_tdd_validation",
+  "arguments": {
+    "kotlin_file_path": "/path/to/generated_mapper.kt",
+    "mapping_report_path": "/path/to/mapping_report.md"
+  }
+}
+```
+
+---
+
+## 🎉 Final Checklist
+
+Before considering Phase 3 complete:
+
+### Code Quality
+- [ ] Controller/Service/Mapper architecture implemented
+- [ ] All endpoints secured with `@Secured`
+- [ ] SLF4J logging throughout
+- [ ] Proper error handling in all layers
+- [ ] Null-safe operations (no `!!`)
+- [ ] Enum mappings with `else` branch
+- [ ] Unmapped fields marked with `TODO()`
+
+### Testing
+- [ ] TDD tests written and passing
+- [ ] Happy path scenarios tested
+- [ ] Error scenarios tested
+- [ ] Null safety tested
+- [ ] Security constraints tested
+- [ ] 100% test coverage for mappers
+
+### Documentation
+- [ ] Header comment with verified endpoints
+- [ ] Mapped fields documented
+- [ ] Unmapped fields explained
+- [ ] Public methods documented
+- [ ] README updated with usage examples
+
+### Verification
+- [ ] All quality gates passed
+- [ ] All tests passing
+- [ ] Code review completed
+- [ ] Security review completed
+- [ ] Performance review completed
+
+---
+
+*These rules ensure production-ready Kotlin code that follows KISS principles, maintains high quality, and provides excellent developer experience.*
+
+---
+
+## 🔄 Rule Updates
+
+This rules file should be updated when:
+- New patterns are discovered in production
+- Security requirements change
+- Performance optimizations are identified
+- Testing strategies evolve
+- Architecture patterns are refined
+
+**Last Updated**: December 2024  
+**Version**: 1.0  
+**Status**: Production Ready ✅

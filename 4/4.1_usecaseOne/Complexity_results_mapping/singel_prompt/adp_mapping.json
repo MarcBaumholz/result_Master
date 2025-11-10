@@ -1,0 +1,179 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /events/hr/v1/worker.leave.absence.request",
+    "reasoning": "Most relevant endpoint for creating new absence requests in ADP Enterprise HR",
+    "required_structure": "Complex nested structure with eventContext and transform objects"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "start_date",
+    "end_date",
+    "status",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "data.eventContext.associateOID",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.eventContext.associateOID)",
+      "notes": "Direct mapping - employee identifier in eventContext, requires nested structure",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id", 
+      "target_field": "data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveTypeCode.codeValue)",
+      "notes": "Direct mapping - absence type code, requires nested object structure with codeValue property",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "data.transform.workerLeave.leaveAbsence.startDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.startDateTime)",
+      "notes": "Direct mapping - start date, requires conversion from date to date-time format",
+      "mapping_type": "Conversion"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "data.transform.workerLeave.leaveAbsence.leaveReturn.returnDateTime",
+      "ground_truth_path": "/events/hr/v1/worker.leave.absence.request (requestBody.data.transform.workerLeave.leaveAbsence.leaveReturn.returnDateTime)",
+      "notes": "Direct mapping - end date, requires conversion from date to date-time format and nested structure",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't accept status in request - likely determined by system after processing",
+      "mapping_type": "Unmappable"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't support half-day concept - uses full date-time fields",
+      "mapping_type": "Unmappable"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't support half-day concept - uses full date-time fields",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track absence amounts in request - may be calculated from dates",
+      "mapping_type": "Unmappable"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't track units in request - may be implicit in date calculations",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - Field not present in API request schema",
+      "notes": "API doesn't accept employee notes in request - may need different endpoint or field",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 4,
+    "unmappable_fields": 6,
+    "mapping_types": {
+      "Direct": 2,
+      "Conversion": 2,
+      "Unmappable": 6
+    },
+    "complexity_analysis": {
+      "simple_mappings": 2,
+      "conversion_mappings": 2,
+      "unmappable_fields": 6
+    },
+    "confidence_scores": {
+      "high_confidence": 4,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 6
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "start_date",
+        "from_type": "date",
+        "to_type": "date-time",
+        "conversion_method": "Convert to ISO 8601 format with time component"
+      },
+      {
+        "field": "end_date", 
+        "from_type": "date",
+        "to_type": "date-time",
+        "conversion_method": "Convert to ISO 8601 format with time component"
+      }
+    ],
+    "nested_structure_requirements": [
+      {
+        "field": "absence_type_external_id",
+        "structure": "Must be wrapped in leaveTypeCode object with codeValue property"
+      },
+      {
+        "field": "end_date",
+        "structure": "Must be wrapped in leaveReturn object with returnDateTime property"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Convert start_date and end_date from date to date-time format",
+      "Wrap leaveTypeCode in object with codeValue property",
+      "Wrap leaveReturn in object with returnDateTime property"
+    ],
+    "missing_fields_handling": [
+      "status: Consider if handled by system or different endpoint",
+      "half_day fields: Convert to full day logic or handle separately",
+      "amount/unit: Calculate from start/end dates if needed",
+      "employee_note: Store elsewhere or find alternative field"
+    ],
+    "validation_requirements": [
+      "All mapped fields are required in API request",
+      "Date-time fields must be in ISO 8601 format",
+      "associateOID must be valid employee ID in system"
+    ],
+    "business_logic_considerations": [
+      "API requires complex nested structure with eventContext and transform objects",
+      "All mapped fields must be present for successful request",
+      "Consider implementing validation for required field completeness"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/events/hr/v1/worker.leave.absence.request",
+    "request_structure": {
+      "root_level": "data",
+      "required_sections": ["eventContext", "transform"],
+      "nested_levels": 4,
+      "complexity": "High - requires deep nesting"
+    },
+    "field_requirements": {
+      "required_fields": 4,
+      "optional_fields": 0,
+      "nested_objects": 3
+    }
+  }
+}
+

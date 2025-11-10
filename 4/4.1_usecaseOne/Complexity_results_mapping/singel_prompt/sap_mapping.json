@@ -1,0 +1,153 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "N/A - Read-only API",
+    "reasoning": "SAP SuccessFactors API is read-only - no creation endpoints available",
+    "required_structure": "N/A - API specification incomplete"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "externalCode",
+      "ground_truth_path": "/rest/timemanagement/absence/v1/availableTimeTypes (response.value[].externalCode)",
+      "notes": "Only available in response schema, not for request submission",
+      "mapping_type": "Unmappable"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "(No Match)",
+      "ground_truth_path": "N/A - No request schema available",
+      "notes": "API specification incomplete - only read-only GET endpoint available",
+      "mapping_type": "Unmappable"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 0,
+    "unmappable_fields": 10,
+    "mapping_types": {
+      "Direct": 0,
+      "Conversion": 0,
+      "Unmappable": 10
+    },
+    "complexity_analysis": {
+      "simple_mappings": 0,
+      "conversion_mappings": 0,
+      "unmappable_fields": 10
+    },
+    "confidence_scores": {
+      "high_confidence": 0,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 10
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [],
+    "nested_structure_requirements": []
+  },
+  "recommendations": {
+    "data_conversions": [
+      "N/A - API is read-only"
+    ],
+    "missing_fields_handling": [
+      "All fields are unmappable - API specification incomplete",
+      "Consider using alternative SAP endpoints if available",
+      "May require different integration approach"
+    ],
+    "validation_requirements": [
+      "N/A - API is read-only"
+    ],
+    "business_logic_considerations": [
+      "API specification is incomplete - only read-only GET endpoints available",
+      "No creation endpoints found in the API specification",
+      "Consider alternative integration approaches or different SAP endpoints",
+      "May require manual data entry or different API version"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "N/A",
+    "endpoint_path": "N/A",
+    "request_structure": {
+      "root_level": "N/A",
+      "required_sections": [],
+      "nested_levels": 0,
+      "complexity": "N/A - API specification incomplete"
+    },
+    "field_requirements": {
+      "required_fields": 0,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+

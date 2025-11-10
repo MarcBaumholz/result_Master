@@ -1,0 +1,166 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-01-17T12:00:00Z",
+  "api_endpoint": {
+    "selected_endpoint": "POST /leave-requests",
+    "reasoning": "Most relevant endpoint for creating leave requests in Rippling",
+    "required_structure": "Simple flat structure with direct field mappings"
+  },
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "source_field": "employee_external_id",
+      "target_field": "worker_id",
+      "ground_truth_path": "/leave-requests (requestBody.worker_id)",
+      "notes": "Semantic mapping - both identify the employee/worker making the request. Rippling uses worker_id instead of employee_external_id.",
+      "mapping_type": "Conversion"
+    },
+    "absence_type_external_id": {
+      "source_field": "absence_type_external_id",
+      "target_field": "leave_type_id",
+      "ground_truth_path": "/leave-requests (requestBody.leave_type_id)",
+      "notes": "Semantic mapping - both identify the type of absence/leave. Rippling uses leave_type_id instead of absence_type_external_id.",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "source_field": "status",
+      "target_field": "status",
+      "ground_truth_path": "/leave-requests (requestBody.status)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the status of the absence/leave request.",
+      "mapping_type": "Direct"
+    },
+    "start_date": {
+      "source_field": "start_date",
+      "target_field": "start_date",
+      "ground_truth_path": "/leave-requests (requestBody.start_date)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the start date of the absence/leave request.",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "source_field": "end_date",
+      "target_field": "end_date",
+      "ground_truth_path": "/leave-requests (requestBody.end_date)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the end date of the absence/leave request.",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "source_field": "start_half_day",
+      "target_field": "start_half_day",
+      "ground_truth_path": "/leave-requests (requestBody.start_half_day)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent whether the start date is a half day.",
+      "mapping_type": "Direct"
+    },
+    "end_half_day": {
+      "source_field": "end_half_day",
+      "target_field": "end_half_day",
+      "ground_truth_path": "/leave-requests (requestBody.end_half_day)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent whether the end date is a half day.",
+      "mapping_type": "Direct"
+    },
+    "amount": {
+      "source_field": "amount",
+      "target_field": "amount",
+      "ground_truth_path": "/leave-requests (requestBody.amount)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the amount of time off requested.",
+      "mapping_type": "Direct"
+    },
+    "unit": {
+      "source_field": "unit",
+      "target_field": "unit",
+      "ground_truth_path": "/leave-requests (requestBody.unit)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the unit of time for the amount.",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "source_field": "employee_note",
+      "target_field": "employee_note",
+      "ground_truth_path": "/leave-requests (requestBody.employee_note)",
+      "notes": "Direct mapping - exact field name match with same semantic meaning. Both represent the employee's note about the request.",
+      "mapping_type": "Direct"
+    }
+  },
+  "summary": {
+    "total_fields": 10,
+    "mapped_fields": 10,
+    "unmappable_fields": 0,
+    "mapping_types": {
+      "Direct": 8,
+      "Conversion": 2,
+      "Unmappable": 0
+    },
+    "complexity_analysis": {
+      "simple_mappings": 8,
+      "conversion_mappings": 2,
+      "unmappable_fields": 0
+    },
+    "confidence_scores": {
+      "high_confidence": 10,
+      "medium_confidence": 0,
+      "low_confidence": 0,
+      "unmappable": 0
+    }
+  },
+  "data_conversions": {
+    "required_conversions": [
+      {
+        "field": "employee_external_id",
+        "from_type": "string",
+        "to_type": "string",
+        "conversion_method": "Map to worker_id field - semantic mapping"
+      },
+      {
+        "field": "absence_type_external_id",
+        "from_type": "string",
+        "to_type": "string",
+        "conversion_method": "Map to leave_type_id field - semantic mapping"
+      }
+    ]
+  },
+  "recommendations": {
+    "data_conversions": [
+      "Map employee_external_id to worker_id field",
+      "Map absence_type_external_id to leave_type_id field"
+    ],
+    "missing_fields_handling": [
+      "All fields are mappable - no missing fields"
+    ],
+    "validation_requirements": [
+      "All fields are required in API request",
+      "worker_id must be valid worker ID in system",
+      "leave_type_id must be valid leave type ID in system",
+      "Date fields must be in proper format"
+    ],
+    "business_logic_considerations": [
+      "Perfect field mapping with semantic consistency",
+      "All fields must be present for successful request",
+      "No complex transformations required"
+    ]
+  },
+  "api_schema_analysis": {
+    "endpoint_method": "POST",
+    "endpoint_path": "/leave-requests",
+    "request_structure": {
+      "root_level": "flat",
+      "required_sections": ["worker_id", "leave_type_id", "start_date", "end_date"],
+      "nested_levels": 0,
+      "complexity": "Low - simple flat structure"
+    },
+    "field_requirements": {
+      "required_fields": 10,
+      "optional_fields": 0,
+      "nested_objects": 0
+    }
+  }
+}
+
