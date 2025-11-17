@@ -1,0 +1,127 @@
+{
+  "fields": [
+    "employee_id",
+    "absence_type_external_id",
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employee.id",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.employee.id)",
+      "confidence": 0.95,
+      "notes": "Direct mapping - available in response schema",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "timeOff.id",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.timeOff.id)",
+      "confidence": 0.9,
+      "notes": "Conversion: map to the referenced timeOff plan id",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "timeOffRequest.status",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.timeOffRequest.status)",
+      "confidence": 0.85,
+      "notes": "Conversion: available in response but read-only (e.g., 'Successfully Completed', 'Denied', 'Terminated')",
+      "mapping_type": "Conversion"
+    },
+    "start_date": {
+      "target_field": "date",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.date)",
+      "confidence": 0.95,
+      "notes": "Direct mapping - single date field for time off entry",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "derived",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (derived from date field)",
+      "confidence": 0.8,
+      "notes": "Logical: Workday uses single date entries; end_date same as start_date for single-day entries",
+      "mapping_type": "Logical"
+    },
+    "start_half_day": {
+      "target_field": "unmappable",
+      "ground_truth_path": "N/A",
+      "confidence": 0.0,
+      "notes": "Unmappable: Workday API doesn't support half-day logic in timeOffEntries",
+      "mapping_type": "Unmappable"
+    },
+    "end_half_day": {
+      "target_field": "unmappable",
+      "ground_truth_path": "N/A",
+      "confidence": 0.0,
+      "notes": "Unmappable: Workday API doesn't support half-day logic in timeOffEntries",
+      "mapping_type": "Unmappable"
+    },
+    "amount": {
+      "target_field": "units",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.units)",
+      "confidence": 0.95,
+      "notes": "Conversion: integer units field for time off amount",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "unitOfTime",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.unitOfTime)",
+      "confidence": 0.9,
+      "notes": "Direct mapping - unitOfTime field specifies the unit",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "target_field": "descriptor",
+      "ground_truth_path": "/workers/{ID}/timeOffEntries (response.descriptor)",
+      "confidence": 0.85,
+      "notes": "Conversion: descriptor field can be used for employee notes/description",
+      "mapping_type": "Conversion"
+    }
+  },
+  "unmappable_fields": [
+    "start_half_day",
+    "end_half_day"
+  ],
+  "unmappable_analysis": {
+    "start_half_day": {
+      "reason": "Workday API doesn't support half-day logic in timeOffEntries schema",
+      "api_limitation": "Single date field only, no time component or half-day indicators"
+    },
+    "end_half_day": {
+      "reason": "Workday API doesn't support half-day logic in timeOffEntries schema", 
+      "api_limitation": "Single date field only, no time component or half-day indicators"
+    }
+  },
+  "mapping_summary": {
+    "direct_mappings": 2,
+    "conversion_mappings": 5,
+    "logical_mappings": 1,
+    "unmappable_fields": 2,
+    "mapping_coverage": "80%"
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/workers/{ID}/timeOffEntries (GET - Read-only time off entries)"
+    ],
+    "schemas_analyzed": [
+      "timeOffEntries_436f2afb755f100012528fa3260e000f (main schema)",
+      "timeOffRequest_436f2afb755f100012528fd1e2e60013 (status info)",
+      "timeOff_436f2afb755f10001245239d27960009 (time off type info)"
+    ],
+    "critical_limitation": "Workday Common API v1 is READ-ONLY for time off entries - no POST methods available for creating new entries",
+    "date_logic": "Single date field per entry - no start/end date range support",
+    "half_day_logic": "Not supported - single date entries only",
+    "status_logic": "Available in response but read-only",
+    "unit_logic": "Explicit unitOfTime field available",
+    "amount_logic": "Explicit units field (integer) available"
+  },
+  "processing_context": "Workday Common API v1 - READ-ONLY time off entries, single date per entry",
+  "enhancement_confidence": 0.9,
+  "total_fields_identified": 8
+}
+

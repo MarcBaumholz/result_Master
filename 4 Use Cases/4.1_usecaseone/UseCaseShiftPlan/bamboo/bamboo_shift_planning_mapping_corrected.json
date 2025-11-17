@@ -1,0 +1,213 @@
+{
+  "system": "BambooHR",
+  "use_case": "Shift Planning Information Mapping",
+  "api_spec": "bamboohr_api.yaml",
+  "target_fields": [
+    "employee_id",
+    "date",
+    "clock_in_time",
+    "clock_out_time",
+    "hours_worked",
+    "break_start",
+    "break_end",
+    "overtime_hours",
+    "regular_hours",
+    "work_schedule_type",
+    "employment_type",
+    "start_date",
+    "end_date",
+    "active",
+    "department",
+    "status",
+    "notes"
+  ],
+  "mapped_fields": {
+    "employee_id": {
+      "target_field": "employeeId",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/clock_in/{employeeId} (path.employeeId) OR /{companyDomain}/v1/time_tracking/daily_entries (requestBody.entries[].employeeId) OR /{companyDomain}/v1/time_tracking/clock_entries (requestBody.entries[].employeeId)",
+      "confidence": 1.0,
+      "notes": "Employee ID is required in path parameter for clock in/out endpoints, or in request body for daily/clock entries. Type: integer",
+      "mapping_type": "Direct",
+      "data_type": "integer",
+      "validation_status": "VERIFIED"
+    },
+    "date": {
+      "target_field": "date",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/daily_entries (requestBody.entries[].date) OR /{companyDomain}/v1/time_tracking/clock_entries (requestBody.entries[].date)",
+      "confidence": 1.0,
+      "notes": "Date for time entry in ISO-8601 format YYYY-MM-DD. Type: string",
+      "mapping_type": "Direct",
+      "data_type": "string",
+      "format": "YYYY-MM-DD",
+      "validation_status": "VERIFIED"
+    },
+    "clock_in_time": {
+      "target_field": "start",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/clock_in/{employeeId} (requestBody.start) OR /{companyDomain}/v1/time_tracking/clock_entries (requestBody.entries[].start)",
+      "confidence": 1.0,
+      "notes": "Clock in time in 24-hour format HH:MM. Type: string",
+      "mapping_type": "Direct",
+      "data_type": "string",
+      "format": "HH:MM",
+      "validation_status": "VERIFIED"
+    },
+    "clock_out_time": {
+      "target_field": "end",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/clock_entries (requestBody.entries[].end)",
+      "confidence": 1.0,
+      "notes": "Clock out time in 24-hour format HH:MM. Type: string",
+      "mapping_type": "Direct",
+      "data_type": "string",
+      "format": "HH:MM",
+      "validation_status": "VERIFIED"
+    },
+    "hours_worked": {
+      "target_field": "hours",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/daily_entries (requestBody.entries[].hours) OR /{companyDomain}/v1/time_tracking/timesheet_entries (response[].hours)",
+      "confidence": 1.0,
+      "notes": "Number of hours worked. Type: number (float), maximum scale of 4",
+      "mapping_type": "Direct",
+      "data_type": "number",
+      "validation_status": "VERIFIED"
+    },
+    "break_start": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN API",
+      "confidence": 0.0,
+      "notes": "Break start time is not available in BambooHR Time Tracking API. This field does not exist in any endpoint or schema.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND"
+    },
+    "break_end": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN API",
+      "confidence": 0.0,
+      "notes": "Break end time is not available in BambooHR Time Tracking API. This field does not exist in any endpoint or schema.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND"
+    },
+    "overtime_hours": {
+      "target_field": "hoursWorked",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/record (requestBody.hoursWorked) - requires rateType='OT'",
+      "confidence": 0.7,
+      "notes": "Overtime hours are tracked via TimeTrackingRecord with rateType='OT' and hoursWorked. Not directly available as separate field in clock/daily entries. Requires calculation or separate endpoint.",
+      "mapping_type": "Derived",
+      "data_type": "number",
+      "validation_status": "PARTIAL - Requires rateType filtering"
+    },
+    "regular_hours": {
+      "target_field": "hoursWorked",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/record (requestBody.hoursWorked) - requires rateType='REG'",
+      "confidence": 0.7,
+      "notes": "Regular hours are tracked via TimeTrackingRecord with rateType='REG' and hoursWorked. Not directly available as separate field in clock/daily entries. Requires calculation or separate endpoint.",
+      "mapping_type": "Derived",
+      "data_type": "number",
+      "validation_status": "PARTIAL - Requires rateType filtering"
+    },
+    "work_schedule_type": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN API",
+      "confidence": 0.0,
+      "notes": "Work schedule type is not available in BambooHR Time Tracking API. This field does not exist in any endpoint or schema.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND"
+    },
+    "employment_type": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN TIME TRACKING API - May exist in employee tables endpoint: /{companyDomain}/v1/employees/{id}/tables/{table}",
+      "confidence": 0.3,
+      "notes": "Employment type is not available in Time Tracking API. May be available in employee custom tables, but requires separate API call to employee endpoints.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND_IN_TIME_TRACKING"
+    },
+    "start_date": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN TIME TRACKING API - May exist in employee tables endpoint: /{companyDomain}/v1/employees/{id}/tables/{table}",
+      "confidence": 0.3,
+      "notes": "Start date is not available in Time Tracking API. May be available in employee employment history tables, but requires separate API call.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND_IN_TIME_TRACKING"
+    },
+    "end_date": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN TIME TRACKING API - May exist in employee tables endpoint: /{companyDomain}/v1/employees/{id}/tables/{table}",
+      "confidence": 0.3,
+      "notes": "End date is not available in Time Tracking API. May be available in employee employment history tables, but requires separate API call.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND_IN_TIME_TRACKING"
+    },
+    "active": {
+      "target_field": null,
+      "ground_truth_path": "NOT FOUND IN TIME TRACKING API - May exist in employee directory: /{companyDomain}/v1/employees/directory",
+      "confidence": 0.3,
+      "notes": "Active status is not available in Time Tracking API. May be available in employee directory endpoint, but requires separate API call.",
+      "mapping_type": "Unmappable",
+      "validation_status": "NOT_FOUND_IN_TIME_TRACKING"
+    },
+    "department": {
+      "target_field": "departmentId",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/record (requestBody.departmentId)",
+      "confidence": 0.6,
+      "notes": "Department is available as departmentId (integer) in TimeTrackingRecord endpoint, not as department name string. Department name would require lookup from department endpoint.",
+      "mapping_type": "Partial",
+      "data_type": "integer",
+      "validation_status": "PARTIAL - ID only, not name"
+    },
+    "status": {
+      "target_field": "approved",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/timesheet_entries (response[].approved)",
+      "confidence": 0.9,
+      "notes": "Status is available as approval status (boolean) in TimesheetEntry response. Not directly available in request endpoints.",
+      "mapping_type": "Direct",
+      "data_type": "boolean",
+      "validation_status": "VERIFIED - Read-only field"
+    },
+    "notes": {
+      "target_field": "note",
+      "ground_truth_path": "/{companyDomain}/v1/time_tracking/clock_in/{employeeId} (requestBody.note) OR /{companyDomain}/v1/time_tracking/daily_entries (requestBody.entries[].note) OR /{companyDomain}/v1/time_tracking/clock_entries (requestBody.entries[].note) OR /{companyDomain}/v1/time_tracking/timesheet_entries (response[].note)",
+      "confidence": 1.0,
+      "notes": "Notes are available in multiple time tracking endpoints. Type: string",
+      "mapping_type": "Direct",
+      "data_type": "string",
+      "validation_status": "VERIFIED"
+    }
+  },
+  "unmappable_fields": [
+    "break_start",
+    "break_end",
+    "work_schedule_type",
+    "employment_type",
+    "start_date",
+    "end_date",
+    "active"
+  ],
+  "partially_mappable_fields": [
+    "overtime_hours",
+    "regular_hours",
+    "department"
+  ],
+  "key_endpoints": [
+    "/{companyDomain}/v1/time_tracking/clock_in/{employeeId}",
+    "/{companyDomain}/v1/time_tracking/clock_out/{employeeId}",
+    "/{companyDomain}/v1/time_tracking/daily_entries",
+    "/{companyDomain}/v1/time_tracking/clock_entries",
+    "/{companyDomain}/v1/time_tracking/timesheet_entries",
+    "/{companyDomain}/v1/time_tracking/record",
+    "/{companyDomain}/v1/employees/{id}/tables/{table}",
+    "/{companyDomain}/v1/employees/directory"
+  ],
+  "processing_context": "BambooHR Time Tracking API provides basic time tracking functionality. Many shift planning specific fields (breaks, schedule types, employment details) are not available in the time tracking endpoints and would require separate employee API calls.",
+  "enhancement_confidence": 0.65,
+  "total_target_fields": 17,
+  "total_mapped_fields": 7,
+  "total_partially_mappable_fields": 3,
+  "total_unmappable_fields": 7,
+  "mapping_summary": {
+    "direct_mappings": 7,
+    "derived_mappings": 2,
+    "partial_mappings": 1,
+    "unmappable": 7
+  },
+  "notes": "BambooHR Time Tracking API focuses on clock in/out, daily entries, and timesheet management. Fields like break times, work schedule types, and employment details are not part of the time tracking API and would require integration with employee management endpoints. Overtime and regular hours require filtering by rateType in TimeTrackingRecord endpoint."
+}
+

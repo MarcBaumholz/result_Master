@@ -1,0 +1,100 @@
+{
+  "fields": [
+    "employee_external_id",
+    "absence_type_external_id", 
+    "status",
+    "start_date",
+    "end_date",
+    "start_half_day",
+    "end_half_day",
+    "amount",
+    "unit",
+    "employee_note"
+  ],
+  "mapped_fields": {
+    "employee_external_id": {
+      "target_field": "userId",
+      "ground_truth_path": "/EmployeeTime (requestBody.userId)",
+      "notes": "Employee ID mapped to userId field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Direct"
+    },
+    "absence_type_external_id": {
+      "target_field": "timeType",
+      "ground_truth_path": "/EmployeeTime (requestBody.timeType)",
+      "notes": "Absence type mapped to timeType field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Conversion"
+    },
+    "status": {
+      "target_field": "mdfSystemStatus",
+      "ground_truth_path": "/EmployeeTime{Country}/mdfSystemStatus",
+      "notes": "Logical mapping to SAP's primary status field. mdfSystemStatus is the main status field for entity lifecycle management. May require business rule engine to map Flip status values (REQUESTED, APPROVED, DECLINED, CANCELLED) to SAP status codes. Fallback to mdfSystemRecordStatus if needed.",
+      "mapping_type": "Logical"
+    },
+    "start_date": {
+      "target_field": "startDate",
+      "ground_truth_path": "/EmployeeTime (requestBody.startDate)",
+      "notes": "Start date mapped to startDate in SAP SuccessFactors (Date format: /Date(timestamp)/)",
+      "mapping_type": "Direct"
+    },
+    "end_date": {
+      "target_field": "endDate",
+      "ground_truth_path": "/EmployeeTime (requestBody.endDate)",
+      "notes": "End date mapped to endDate in SAP SuccessFactors (Date format: /Date(timestamp)/)",
+      "mapping_type": "Direct"
+    },
+    "start_half_day": {
+      "target_field": "fractionQuantity",
+      "ground_truth_path": "/EmployeeTime (requestBody.fractionQuantity OR requestBody.startTime)",
+      "notes": "Logical: fractionQuantity: if true set to 0.5, if false set to 1.0.",
+      "mapping_type": "Logical"
+    },
+    "end_half_day": {
+      "target_field": "fractionQuantity",
+      "ground_truth_path": "/EmployeeTime (requestBody.fractionQuantity OR requestBody.endTime)",
+      "notes": "Logical: fractionQuantity: if true set to 0.5, if false set to 1.0.",
+      "mapping_type": "Logical"
+    },
+    "amount": {
+      "target_field": "quantityInDays",
+      "ground_truth_path": "/EmployeeTime (requestBody.quantityInDays)",
+      "notes": "Amount mapped to quantityInDays for Day(s) units or quantityInHours for Hour(s) units based on TimeType.unit from AvailableTimeType lookup",
+      "mapping_type": "Conversion"
+    },
+    "unit": {
+      "target_field": "AvailableTimeType.unit",
+      "ground_truth_path": "/rest/timemanagement/absence/v1/availableTimeTypes → value[].unit",
+      "notes": "Direct mapping to SAP's unit field from AvailableTimeType. SAP provides direct unit specification (e.g., 'Day(s)', 'Hour(s)') in the AvailableTimeType catalog.",
+      "mapping_type": "Direct"
+    },
+    "employee_note": {
+      "target_field": "comment",
+      "ground_truth_path": "/EmployeeTime (requestBody.comment)",
+      "notes": "Employee note mapped to comment field in SAP SuccessFactors EmployeeTime schema",
+      "mapping_type": "Direct"
+    }
+  },
+  "unmappable_fields": [
+    ""
+  ],
+  "processing_context": "SAP SuccessFactors Time Off API mapping analysis. Key endpoints: /EmployeeTime (POST), /rest/timemanagement/absence/v1/availableTimeTypes (GET). SAP manages status through workflow system - not directly settable.",
+  "total_fields_identified": 9,
+  "mapping_summary": {
+    "direct_mappings": 6,
+    "conversion_mappings": 2,
+    "logical_mappings": 2,
+    "unmappable_fields": 0,
+    "coverage_percentage": 90
+  },
+  "api_analysis_notes": {
+    "endpoints_analyzed": [
+      "/EmployeeTime (POST)",
+      "/rest/timemanagement/absence/v1/availableTimeTypes (GET)"
+    ],
+    "half_day_logic": "fractionQuantity: 0.5 for half-day, 1.0 for full-day.",
+    "unit_logic": "Lookup unit from AvailableTimeType.unit field based on timeType value",
+    "amount_logic": "Use quantityInDays for Day(s) units, quantityInHours for Hour(s) units based on TimeType.unit",
+    "workflow_notes": "SAP manages status through workflow system - not directly settable",
+    "date_format": "SAP uses /Date(timestamp)/ format for dates",
+    "time_format": "SAP uses PT15H51M04S format for times (ISO 8601 duration)"
+  }
+}

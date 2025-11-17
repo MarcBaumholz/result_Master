@@ -1,0 +1,371 @@
+{
+    "system": "Personio",
+    "use_case": "Shift Planning Information Mapping",
+    "api_spec": "openapi_personio.json",
+    "api_version": "1.0",
+    "target_fields": [
+      "employee_id",
+      "date",
+      "clock_in_time",
+      "clock_out_time",
+      "hours_worked",
+      "break_start",
+      "break_end",
+      "overtime_hours",
+      "regular_hours",
+      "work_schedule_type",
+      "employment_type",
+      "start_date",
+      "end_date",
+      "active",
+      "department",
+      "status",
+      "notes"
+    ],
+    "mapped_fields": {
+      "employee_id": {
+        "target_field": "employee_id",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].employee",
+        "personio_field_type": "integer",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].employee",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "transformation": {
+          "type": "type_conversion",
+          "from": "string",
+          "to": "integer",
+          "note": "Convert string employee_id to integer for Personio API"
+        },
+        "required": true,
+        "notes": "Employee identifier - must be converted from string to integer"
+      },
+      "date": {
+        "target_field": "date",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].date",
+        "personio_field_type": "string (date format: YYYY-MM-DD)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].date",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "required": true,
+        "notes": "Attendance date in YYYY-MM-DD format"
+      },
+      "clock_in_time": {
+        "target_field": "clock_in_time",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].start_time",
+        "personio_field_type": "string (pattern: ^\\d\\d:\\d\\d$)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].start_time",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "transformation": {
+          "type": "time_format",
+          "from": "HH:MM:SS",
+          "to": "HH:MM",
+          "note": "Convert from HH:MM:SS to HH:MM format (remove seconds)"
+        },
+        "required": true,
+        "notes": "Start time - convert from HH:MM:SS to HH:MM format"
+      },
+      "clock_out_time": {
+        "target_field": "clock_out_time",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].end_time",
+        "personio_field_type": "string (pattern: ^\\d\\d:\\d\\d$)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].end_time",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "transformation": {
+          "type": "time_format",
+          "from": "HH:MM:SS",
+          "to": "HH:MM",
+          "note": "Convert from HH:MM:SS to HH:MM format (remove seconds)"
+        },
+        "required": true,
+        "notes": "End time - convert from HH:MM:SS to HH:MM format"
+      },
+      "break_start": {
+        "target_field": "break_start",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].break",
+        "personio_field_type": "integer (minutes)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].break",
+        "mapping_type": "Derived",
+        "confidence": 0.7,
+        "transformation": {
+          "type": "calculated",
+          "formula": "Calculate break duration in minutes from break_start and break_end times",
+          "note": "Personio only stores break duration in minutes, not start/end times. Calculate: (break_end - break_start) in minutes"
+        },
+        "required": false,
+        "notes": "Personio API does not support break_start/break_end separately. Only break duration (minutes) is available. Calculate from break_start and break_end times."
+      },
+      "break_end": {
+        "target_field": "break_end",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].break",
+        "personio_field_type": "integer (minutes)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].break",
+        "mapping_type": "Derived",
+        "confidence": 0.7,
+        "transformation": {
+          "type": "calculated",
+          "formula": "Calculate break duration in minutes from break_start and break_end times",
+          "note": "Personio only stores break duration in minutes, not start/end times. Calculate: (break_end - break_start) in minutes"
+        },
+        "required": false,
+        "notes": "Personio API does not support break_start/break_end separately. Only break duration (minutes) is available. Calculate from break_start and break_end times."
+      },
+      "hours_worked": {
+        "target_field": "hours_worked",
+        "personio_endpoint": "N/A",
+        "personio_method": "N/A",
+        "personio_field": "N/A",
+        "personio_field_type": "N/A",
+        "personio_path": "N/A",
+        "mapping_type": "Calculated",
+        "confidence": 0.9,
+        "transformation": {
+          "type": "calculated",
+          "formula": "Calculate from start_time, end_time, and break duration",
+          "note": "Calculate: (end_time - start_time) - (break in hours). Personio does not store hours_worked directly."
+        },
+        "required": false,
+        "notes": "Not available in Personio API. Must be calculated from start_time, end_time, and break duration."
+      },
+      "overtime_hours": {
+        "target_field": "overtime_hours",
+        "personio_endpoint": "N/A",
+        "personio_method": "N/A",
+        "personio_field": "N/A",
+        "personio_field_type": "N/A",
+        "personio_path": "N/A",
+        "mapping_type": "Unmappable",
+        "confidence": 0.0,
+        "required": false,
+        "notes": "Not available in Personio API. Overtime calculation would require work schedule information and business logic."
+      },
+      "regular_hours": {
+        "target_field": "regular_hours",
+        "personio_endpoint": "N/A",
+        "personio_method": "N/A",
+        "personio_field": "N/A",
+        "personio_field_type": "N/A",
+        "personio_path": "N/A",
+        "mapping_type": "Unmappable",
+        "confidence": 0.0,
+        "required": false,
+        "notes": "Not available in Personio API. Regular hours calculation would require work schedule information and business logic."
+      },
+      "work_schedule_type": {
+        "target_field": "work_schedule_type",
+        "personio_endpoint": "/company/employees/{employee_id}",
+        "personio_method": "GET",
+        "personio_field": "data.attributes.work_schedule.value.attributes",
+        "personio_field_type": "object",
+        "personio_path": "/company/employees/{employee_id} -> response -> data.attributes.work_schedule.value.attributes",
+        "mapping_type": "Cross-API",
+        "confidence": 0.8,
+        "transformation": {
+          "type": "derived",
+          "note": "Work schedule information is available in employee data, but 'work_schedule_type' as a string field does not exist. Work schedule has day-specific hours (monday, tuesday, etc.)"
+        },
+        "required": false,
+        "notes": "Available in Employee API but not as a direct 'type' field. Work schedule contains day-specific hours. Requires separate API call to /company/employees/{employee_id}."
+      },
+      "employment_type": {
+        "target_field": "employment_type",
+        "personio_endpoint": "/company/employees/{employee_id}",
+        "personio_method": "GET",
+        "personio_field": "data.attributes.employment_type.value",
+        "personio_field_type": "string",
+        "personio_path": "/company/employees/{employee_id} -> response -> data.attributes.employment_type.value",
+        "mapping_type": "Cross-API",
+        "confidence": 1.0,
+        "required": false,
+        "notes": "Available in Employee API. Requires separate API call to /company/employees/{employee_id}. Possible values: 'internal', 'external', etc."
+      },
+      "start_date": {
+        "target_field": "start_date",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].date",
+        "personio_field_type": "string (date format: YYYY-MM-DD)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].date",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "transformation": {
+          "type": "same_as_date",
+          "note": "For single-day attendance, start_date maps to the same date field"
+        },
+        "required": false,
+        "notes": "For single-day attendance records, start_date is the same as date field. For multi-day periods, Personio requires separate attendance records per day."
+      },
+      "end_date": {
+        "target_field": "end_date",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].date",
+        "personio_field_type": "string (date format: YYYY-MM-DD)",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].date",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "transformation": {
+          "type": "same_as_date",
+          "note": "For single-day attendance, end_date maps to the same date field"
+        },
+        "required": false,
+        "notes": "For single-day attendance records, end_date is the same as date field. For multi-day periods, Personio requires separate attendance records per day."
+      },
+      "active": {
+        "target_field": "active",
+        "personio_endpoint": "/company/employees/{employee_id}",
+        "personio_method": "GET",
+        "personio_field": "data.attributes.status.value",
+        "personio_field_type": "string",
+        "personio_path": "/company/employees/{employee_id} -> response -> data.attributes.status.value",
+        "mapping_type": "Cross-API",
+        "confidence": 0.9,
+        "transformation": {
+          "type": "value_mapping",
+          "mapping": {
+            "active": "active",
+            "inactive": "inactive",
+            "onboarding": "onboarding"
+          },
+          "note": "Map Personio status to boolean active field. 'active' status = true, others = false"
+        },
+        "required": false,
+        "notes": "Available in Employee API as 'status' field. Requires separate API call. Map 'active' status to true, other statuses to false."
+      },
+      "department": {
+        "target_field": "department",
+        "personio_endpoint": "/company/employees/{employee_id}",
+        "personio_method": "GET",
+        "personio_field": "data.attributes.department.value.attributes.name",
+        "personio_field_type": "string",
+        "personio_path": "/company/employees/{employee_id} -> response -> data.attributes.department.value.attributes.name",
+        "mapping_type": "Cross-API",
+        "confidence": 1.0,
+        "required": false,
+        "notes": "Available in Employee API. Requires separate API call to /company/employees/{employee_id}."
+      },
+      "status": {
+        "target_field": "status",
+        "personio_endpoint": "/company/employees/{employee_id}",
+        "personio_method": "GET",
+        "personio_field": "data.attributes.status.value",
+        "personio_field_type": "string",
+        "personio_path": "/company/employees/{employee_id} -> response -> data.attributes.status.value",
+        "mapping_type": "Cross-API",
+        "confidence": 1.0,
+        "required": false,
+        "notes": "Available in Employee API. Possible values: 'active', 'inactive', 'onboarding'. Requires separate API call to /company/employees/{employee_id}."
+      },
+      "notes": {
+        "target_field": "notes",
+        "personio_endpoint": "/company/attendances",
+        "personio_method": "POST",
+        "personio_field": "attendances[].comment",
+        "personio_field_type": "string",
+        "personio_path": "/company/attendances -> requestBody -> attendances[].comment",
+        "mapping_type": "Direct",
+        "confidence": 1.0,
+        "required": false,
+        "notes": "Optional comment field for attendance record"
+      }
+    },
+    "api_endpoints": {
+      "attendance_create": {
+        "path": "/company/attendances",
+        "method": "POST",
+        "description": "Create attendance period(s)",
+        "request_schema": "NewAttendancePeriodRequest",
+        "required_fields": [
+          "employee",
+          "date",
+          "start_time",
+          "end_time",
+          "break",
+          "comment"
+        ]
+      },
+      "attendance_get": {
+        "path": "/company/attendances",
+        "method": "GET",
+        "description": "Get attendance periods with filtering",
+        "query_parameters": [
+          "start_date",
+          "end_date",
+          "employees",
+          "limit",
+          "offset"
+        ]
+      },
+      "employee_get": {
+        "path": "/company/employees/{employee_id}",
+        "method": "GET",
+        "description": "Get employee details including department, status, employment_type, work_schedule"
+      }
+    },
+    "field_categories": {
+      "directly_mappable": [
+        "employee_id",
+        "date",
+        "clock_in_time",
+        "clock_out_time",
+        "notes",
+        "start_date",
+        "end_date"
+      ],
+      "derived_calculated": [
+        "break_start",
+        "break_end",
+        "hours_worked"
+      ],
+      "cross_api_required": [
+        "employment_type",
+        "department",
+        "status",
+        "active",
+        "work_schedule_type"
+      ],
+      "unmappable": [
+        "overtime_hours",
+        "regular_hours"
+      ]
+    },
+    "implementation_notes": {
+      "break_handling": "Personio API only supports break duration in minutes, not break start/end times. Calculate break duration from break_start and break_end: (break_end - break_start) in minutes.",
+      "time_format": "Personio requires time in HH:MM format (not HH:MM:SS). Remove seconds from clock_in_time and clock_out_time.",
+      "employee_id_conversion": "Personio expects employee ID as integer. Convert from string format if needed.",
+      "multi_api_calls": "To get complete shift planning information, you need: 1) POST to /company/attendances for attendance data, 2) GET to /company/employees/{employee_id} for employee metadata.",
+      "calculated_fields": "hours_worked, overtime_hours, and regular_hours are not stored in Personio. These must be calculated using business logic based on work schedules.",
+      "date_range_handling": "Personio attendance API supports single-day records only. For date ranges, create separate attendance records for each day."
+    },
+    "mapping_statistics": {
+      "total_target_fields": 17,
+      "directly_mappable": 7,
+      "derived_calculated": 3,
+      "cross_api_required": 5,
+      "unmappable": 2,
+      "overall_coverage": 0.88,
+      "direct_coverage": 0.41
+    },
+    "validation_status": "VERIFIED",
+    "last_updated": "2025-01-27",
+    "api_spec_reference": {
+      "file": "openapi_personio.json",
+      "version": "1.0",
+      "attendance_schema": "NewAttendancePeriodRequest",
+      "employee_schema": "EmployeeResponse"
+    }
+  }
+  
